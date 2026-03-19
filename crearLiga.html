@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Nueva Liga - Fantasy Esports</title>
+    <style>
+        /* Unos estilos súper básicos para que no se vea feo */
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .formulario-caja { background: white; padding: 20px; border-radius: 8px; max-width: 400px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .campo { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        #mensaje { margin-top: 15px; padding: 10px; display: none; border-radius: 4px; }
+        .exito { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="formulario-caja">
+        <h2>Crea tu Liga Fantasy</h2>
+        
+        <form id="formCrearLiga">
+            
+            <input type="hidden" id="idUsuarioLogueado" value="1">
+
+            <div class="campo">
+                <label for="nombreLiga">Nombre de la Liga:</label>
+                <input type="text" id="nombreLiga" placeholder="Ej: Liga Master 2026" required>
+            </div>
+
+            <div class="campo">
+                <label for="tipoLiga">Tipo de Liga:</label>
+                <select id="tipoLiga" required>
+                    <option value="Privada">Privada (Solo amigos)</option>
+                    <option value="Publica">Pública (Abierta a todos)</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="maxParticipantes">Máximo de Participantes:</label>
+                <input type="number" id="maxParticipantes" value="20" min="2" max="50" required>
+            </div>
+
+            <button type="submit">Crear Liga</button>
+        </form>
+
+        <div id="mensaje"></div>
+    </div>
+
+    <script src="creacionLiga.js"></script>
+</body>
+</html>
