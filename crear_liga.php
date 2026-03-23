@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: login/login.php");
+    header("Location: index.php");
     exit();
 }
 $nombre_usuario_actual = $_SESSION['usuario'];
