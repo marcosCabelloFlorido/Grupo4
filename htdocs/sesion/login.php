@@ -1,23 +1,22 @@
 <?php
 session_start();
-require 'conexion.php';
+require __DIR__ . '/../conexion.php';
 $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST['usuario'];
-    $pass = $_POST['contrasena'];
+    $pass    = $_POST['contrasena'];
 
     try {
-        // Tabla 'usuarios' en minúscula
         $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE nombre = :u");
         $stmt->execute([':u' => $usuario]);
         $user = $stmt->fetch();
 
-        // Columna 'contrasena' con N
         if ($user && password_verify($pass, $user['contrasena'])) {
             $_SESSION['usuario'] = $user['nombre'];
-            $_SESSION['rol'] = $user['rol'];
-            header("Location: cliente.php");
+            $_SESSION['rol']     = $user['rol'];
+            // Dashboard está en funcionalidades/
+            header("Location: ../funcionalidades/cliente.php");
             exit();
         } else {
             $mensaje = "<div class='mensaje' style='color:#ff4d4d;'>Credenciales inválidas.</div>";
@@ -42,18 +41,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         input { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #fff; margin-bottom: 15px; }
         button { width: 100%; padding: 14px; background: linear-gradient(135deg, #168C77, #1DF2DD); color: #000; border: none; cursor: pointer; font-weight: bold; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); }
         .link { display: block; text-align: center; margin-top: 15px; color: #A63247; text-decoration: none; }
+        .link-home { display: block; text-align: center; margin-top: 10px; color: #6b6b7a; text-decoration: none; font-size: 0.85rem; }
     </style>
 </head>
 <body>
     <div class="card">
         <h2>Login</h2>
         <?php echo $mensaje; ?>
-        <form method="POST" action="index.php">
-            <input type="text" name="usuario" placeholder="USUARIO" required>
+        <form method="POST" action="login.php">
+            <input type="text"     name="usuario"    placeholder="USUARIO"    required>
             <input type="password" name="contrasena" placeholder="CONTRASEÑA" required>
             <button type="submit">ACCEDER</button>
         </form>
+        <!-- registro está en la misma carpeta sesion/ -->
         <a href="registro.php" class="link">¿No tienes cuenta? Regístrate</a>
+        <!-- Volver a la landing en la raíz -->
+        <a href="../index.html" class="link-home">← Volver al inicio</a>
     </div>
 </body>
 </html>
