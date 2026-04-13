@@ -66,14 +66,22 @@ try {
 
         $asignados = [];
 
+        // AQUÍ ESTÁ LA CORRECCIÓN CRÍTICA:
+        // Excluimos los que tienen dueño Y los que están en el mercado actualmente
         $queryRol = "SELECT id_jugador, nickname, rol, precio_mercado, media_punto 
                      FROM jugadores 
-                     WHERE rol = :rol AND id_jugador NOT IN (
+                     WHERE rol = :rol 
+                     AND id_jugador NOT IN (
                          SELECT A.id_jugador 
                          FROM alineaciones A 
                          INNER JOIN equipos_fantasy EF ON A.id_equipo_fantasy = EF.id_equipo_fantasy 
                          WHERE EF.id_liga = :id_liga
                      ) 
+                     AND id_jugador NOT IN (
+                         SELECT id_jugador 
+                         FROM mercado_liga 
+                         WHERE id_liga = :id_liga
+                     )
                      ORDER BY RAND() 
                      LIMIT :limite";
         
