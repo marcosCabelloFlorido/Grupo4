@@ -9,6 +9,14 @@ require_once __DIR__ . '/../conexion.php';
 
 $nombre_usuario_actual = $_SESSION['usuario'];
 $mensaje = null;
+$mercado_list = [];
+$fecha_fin_js = null;
+
+// Mostrar mensaje si venimos de una redirección (Solución al Resubmission y a los errores)
+if (isset($_SESSION['mensaje_mercado'])) {
+    $mensaje = $_SESSION['mensaje_mercado'];
+    unset($_SESSION['mensaje_mercado']);
+}
 
 if (!isset($_GET['id_liga']) || !ctype_digit($_GET['id_liga'])) {
     header("Location: cliente.php");
@@ -32,6 +40,50 @@ try {
     $id_equipo = $datos_equipo['id_equipo_fantasy'];
 
     // ────────────────────────────────────────────────────────────────────────
+    // LÓGICA DE PUJA (POST) CON MANEJO DE ERRORES INDEPENDIENTE
+    // ────────────────────────────────────────────────────────────────────────
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_mercado'], $_POST['monto_puja'])) {
+        try {
+            $id_mercado_puja = (int)$_POST['id_mercado'];
+            $monto_puja = (float)$_POST['monto_puja'];
+            
+            $conexion->beginTransaction();
+            
+            $stmtCheckM = $conexion->prepare("SELECT J.precio_mercado FROM mercado_liga M INNER JOIN jugadores J ON M.id_jugador = J.id_jugador WHERE M.id_mercado = :id_m");
+            $stmtCheckM->execute([':id_m' => $id_mercado_puja]);
+            $jugador_info = $stmtCheckM->fetch(PDO::FETCH_ASSOC);
+
+            $stmtCheckPuja = $conexion->prepare("SELECT id_puja FROM pujas WHERE id_mercado = :id_m AND id_equipo_fantasy = :id_ef");
+            $stmtCheckPuja->execute([':id_m' => $id_mercado_puja, ':id_ef' => $id_equipo]);
+            
+            if (!$jugador_info) {
+                throw new Exception("El mercado ha cambiado. Inténtalo de nuevo.");
+            } elseif ($stmtCheckPuja->fetch()) {
+                throw new Exception("Ya has realizado una puja por este agente. Espera a la resolución.");
+            } elseif ($monto_puja < $jugador_info['precio_mercado']) {
+                throw new Exception("La puja debe ser igual o superior al valor de mercado.");
+            } elseif ($datos_equipo['presupuesto_disponible'] < $monto_puja) {
+                // AQUÍ ES DONDE SALTA EL ERROR DE DINERO INSUFICIENTE
+                throw new Exception("Presupuesto insuficiente para realizar esa puja.");
+            }
+
+            $conexion->prepare("UPDATE equipos_fantasy SET presupuesto_disponible = presupuesto_disponible - :monto WHERE id_equipo_fantasy = :id_ef")->execute([':monto' => $monto_puja, ':id_ef' => $id_equipo]);
+            $conexion->prepare("INSERT INTO pujas (id_mercado, id_equipo_fantasy, monto) VALUES (:id_m, :id_ef, :monto)")->execute([':id_m' => $id_mercado_puja, ':id_ef' => $id_equipo, ':monto' => $monto_puja]);
+
+            $conexion->commit();
+            $_SESSION['mensaje_mercado'] = ["tipo" => "exito", "texto" => "Puja registrada. El dinero ha sido congelado hasta la resolución."];
+        } catch (Exception $ex) {
+            if ($conexion->inTransaction()) $conexion->rollBack();
+            // Guardamos el error en rojo en la sesión para mostrarlo al recargar
+            $_SESSION['mensaje_mercado'] = ["tipo" => "error", "texto" => $ex->getMessage()];
+        }
+        
+        // Redirigimos siempre para limpiar el formulario y pintar todo correctamente
+        header("Location: mercado.php?id_liga=" . $id_liga);
+        exit();
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
     // MOTOR DE RESOLUCIÓN DE PUJAS (Lazy Evaluation)
     // ────────────────────────────────────────────────────────────────────────
     $stmtExp = $conexion->prepare("SELECT id_mercado, id_jugador FROM mercado_liga WHERE id_liga = :id_liga AND fecha_expiracion <= NOW()");
@@ -42,19 +94,16 @@ try {
         $conexion->beginTransaction();
         
         foreach ($expirados as $exp) {
-            // Obtener todas las pujas de este jugador ordenadas de mayor a menor
             $stmtBids = $conexion->prepare("SELECT id_equipo_fantasy, monto FROM pujas WHERE id_mercado = :id_m ORDER BY monto DESC, fecha_puja ASC");
             $stmtBids->execute([':id_m' => $exp['id_mercado']]);
             $bids = $stmtBids->fetchAll(PDO::FETCH_ASSOC);
 
             if (count($bids) > 0) {
-                $ganador = $bids[0]; // El que más pagó
+                $ganador = $bids[0]; 
                 
-                // Asignar jugador al ganador (como reserva: titular = 0)
                 $stmtIns = $conexion->prepare("INSERT INTO alineaciones (id_equipo_fantasy, id_jugador, jornada, titular) VALUES (:id_ef, :id_j, 1, 0)");
                 $stmtIns->execute([':id_ef' => $ganador['id_equipo_fantasy'], ':id_j' => $exp['id_jugador']]);
 
-                // Devolver el dinero congelado a los perdedores
                 for ($i = 1; $i < count($bids); $i++) {
                     $perdedor = $bids[$i];
                     $stmtRefund = $conexion->prepare("UPDATE equipos_fantasy SET presupuesto_disponible = presupuesto_disponible + :monto WHERE id_equipo_fantasy = :id_ef");
@@ -63,26 +112,24 @@ try {
             }
         }
 
-        // Borrar el mercado viejo (las pujas se borran solas por CASCADE)
-        $conexion->prepare("DELETE FROM mercado_liga WHERE id_liga = :id_liga AND fecha_expiracion <= NOW()")->execute([':id_liga' => $id_liga]);
+        $conexion->prepare("DELETE FROM mercado_liga WHERE id_liga = :id_liga")->execute([':id_liga' => $id_liga]);
 
-        // Generar 5 nuevos jugadores libres para el mercado
         $queryLibres = "SELECT id_jugador FROM jugadores WHERE id_jugador NOT IN (SELECT A.id_jugador FROM alineaciones A INNER JOIN equipos_fantasy EF ON A.id_equipo_fantasy = EF.id_equipo_fantasy WHERE EF.id_liga = :id_liga) ORDER BY RAND() LIMIT 5";
         $stmtLibres = $conexion->prepare($queryLibres);
         $stmtLibres->execute([':id_liga' => $id_liga]);
         $nuevos_mercado = $stmtLibres->fetchAll(PDO::FETCH_COLUMN);
 
-        $stmtInsertMercado = $conexion->prepare("INSERT INTO mercado_liga (id_liga, id_jugador, fecha_expiracion) VALUES (:id_liga, :id_jugador, DATE_ADD(NOW(), INTERVAL 1 DAY))");
-        foreach ($nuevos_mercado as $id_j) {
-            $stmtInsertMercado->execute([':id_liga' => $id_liga, ':id_jugador' => $id_j]);
+        if (count($nuevos_mercado) > 0) {
+            $stmtInsertMercado = $conexion->prepare("INSERT INTO mercado_liga (id_liga, id_jugador, fecha_expiracion) VALUES (:id_liga, :id_jugador, DATE_ADD(NOW(), INTERVAL 1 DAY))");
+            foreach ($nuevos_mercado as $id_j) {
+                $stmtInsertMercado->execute([':id_liga' => $id_liga, ':id_jugador' => $id_j]);
+            }
         }
         
         $conexion->commit();
-        // Recargar el presupuesto por si el usuario actual recibió devoluciones
         $stmtUser->execute([':nombre' => $nombre_usuario_actual, ':id_liga' => $id_liga]);
         $datos_equipo = $stmtUser->fetch(PDO::FETCH_ASSOC);
     } else {
-        // Si no hay expirados, verificamos si el mercado está vacío (primera vez que se entra)
         $stmtCount = $conexion->prepare("SELECT COUNT(*) FROM mercado_liga WHERE id_liga = :id_liga");
         $stmtCount->execute([':id_liga' => $id_liga]);
         if ($stmtCount->fetchColumn() == 0) {
@@ -91,51 +138,20 @@ try {
             $stmtLibres = $conexion->prepare($queryLibres);
             $stmtLibres->execute([':id_liga' => $id_liga]);
             $nuevos_mercado = $stmtLibres->fetchAll(PDO::FETCH_COLUMN);
-            $stmtInsertMercado = $conexion->prepare("INSERT INTO mercado_liga (id_liga, id_jugador, fecha_expiracion) VALUES (:id_liga, :id_jugador, DATE_ADD(NOW(), INTERVAL 1 DAY))");
-            foreach ($nuevos_mercado as $id_j) {
-                $stmtInsertMercado->execute([':id_liga' => $id_liga, ':id_jugador' => $id_j]);
+
+            if (count($nuevos_mercado) > 0) {
+                $stmtInsertMercado = $conexion->prepare("INSERT INTO mercado_liga (id_liga, id_jugador, fecha_expiracion) VALUES (:id_liga, :id_jugador, DATE_ADD(NOW(), INTERVAL 1 DAY))");
+                foreach ($nuevos_mercado as $id_j) {
+                    $stmtInsertMercado->execute([':id_liga' => $id_liga, ':id_jugador' => $id_j]);
+                }
             }
             $conexion->commit();
         }
     }
 
     // ────────────────────────────────────────────────────────────────────────
-    // LÓGICA DE PUJA (POST)
+    // OBTENER DATOS PARA PINTAR LA WEB
     // ────────────────────────────────────────────────────────────────────────
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_mercado'], $_POST['monto_puja'])) {
-        $id_mercado_puja = (int)$_POST['id_mercado'];
-        $monto_puja = (float)$_POST['monto_puja'];
-        
-        $conexion->beginTransaction();
-        
-        // 1. Verificar que el jugador sigue en el mercado y no ha pujado ya
-        $stmtCheckM = $conexion->prepare("SELECT J.precio_mercado FROM mercado_liga M INNER JOIN jugadores J ON M.id_jugador = J.id_jugador WHERE M.id_mercado = :id_m");
-        $stmtCheckM->execute([':id_m' => $id_mercado_puja]);
-        $jugador_info = $stmtCheckM->fetch(PDO::FETCH_ASSOC);
-
-        $stmtCheckPuja = $conexion->prepare("SELECT id_puja FROM pujas WHERE id_mercado = :id_m AND id_equipo_fantasy = :id_ef");
-        $stmtCheckPuja->execute([':id_m' => $id_mercado_puja, ':id_ef' => $id_equipo]);
-        
-        if (!$jugador_info) {
-            throw new Exception("El mercado ha cambiado. Inténtalo de nuevo.");
-        } elseif ($stmtCheckPuja->fetch()) {
-            throw new Exception("Ya has realizado una puja por este agente. Espera a la resolución.");
-        } elseif ($monto_puja < $jugador_info['precio_mercado']) {
-            throw new Exception("La puja debe ser igual o superior al valor de mercado.");
-        } elseif ($datos_equipo['presupuesto_disponible'] < $monto_puja) {
-            throw new Exception("Presupuesto insuficiente para esa puja.");
-        }
-
-        // 2. Congelar el dinero y registrar la puja
-        $conexion->prepare("UPDATE equipos_fantasy SET presupuesto_disponible = presupuesto_disponible - :monto WHERE id_equipo_fantasy = :id_ef")->execute([':monto' => $monto_puja, ':id_ef' => $id_equipo]);
-        $conexion->prepare("INSERT INTO pujas (id_mercado, id_equipo_fantasy, monto) VALUES (:id_m, :id_ef, :monto)")->execute([':id_m' => $id_mercado_puja, ':id_ef' => $id_equipo, ':monto' => $monto_puja]);
-
-        $conexion->commit();
-        $datos_equipo['presupuesto_disponible'] -= $monto_puja;
-        $mensaje = ["tipo" => "exito", "texto" => "Puja registrada. El dinero ha sido congelado hasta la resolución."];
-    }
-
-    // 4. Obtener datos para pintar la web (AHORA CONTIENE EL MONTO DE MI PUJA)
     $queryPintar = "SELECT M.id_mercado, J.nickname, J.rol, J.precio_mercado, J.media_punto, M.fecha_expiracion, 
                     (SELECT monto FROM pujas P WHERE P.id_mercado = M.id_mercado AND P.id_equipo_fantasy = :id_ef) as mi_puja
                     FROM mercado_liga M 
@@ -145,7 +161,6 @@ try {
     $stmtPintar->execute([':id_liga' => $id_liga, ':id_ef' => $id_equipo]);
     $mercado_list = $stmtPintar->fetchAll(PDO::FETCH_ASSOC);
 
-    // Obtener la fecha de expiración para el contador JS
     $fecha_fin_js = !empty($mercado_list) ? $mercado_list[0]['fecha_expiracion'] : null;
 
 } catch (Exception $e) {
@@ -225,7 +240,6 @@ function getIcon($rol) {
         </div>
 
         <script>
-            // Lógica para cancelar la puja
             async function cancelarPuja(idMercado) {
                 if (!confirm('¿Estás seguro de que quieres retirar tu puja? Recuperarás tu dinero inmediatamente para poder fichar a otro agente.')) return;
                 
@@ -240,7 +254,7 @@ function getIcon($rol) {
                     });
                     const json = await res.json();
                     if (json.status === 'success') {
-                        location.reload(); // Recargar para reflejar que el dinero volvió
+                        window.location.href = window.location.href; 
                     } else {
                         alert("Error: " + json.message);
                     }
@@ -249,7 +263,6 @@ function getIcon($rol) {
                 }
             }
 
-            // Lógica del contador regresivo en JavaScript
             const fechaFin = new Date("<?php echo $fecha_fin_js; ?>").getTime();
             
             const x = setInterval(function() {
@@ -259,7 +272,7 @@ function getIcon($rol) {
                 if (distancia < 0) {
                     clearInterval(x);
                     document.getElementById("countdown").innerHTML = "RESOLVIENDO...";
-                    setTimeout(() => location.reload(), 2000); // Recarga para activar el motor PHP
+                    setTimeout(() => location.reload(), 2000);
                     return;
                 }
 
