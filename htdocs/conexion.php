@@ -4,10 +4,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$_servidor = "localhost";
-$_usuario  = "root";
-$_contrasena = "";
-$_bd       = "fantasyesports_v2";
+$_servidor = "sql207.infinityfree.com";
+$_usuario  = "if0_41429834";
+$_contrasena = "jIQdCLMr4zTn6B";
+$_bd       = "if0_41429834_fantasyesports";
 
 try {
     $conexion = new PDO(
