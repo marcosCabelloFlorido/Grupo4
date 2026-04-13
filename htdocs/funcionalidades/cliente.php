@@ -131,14 +131,38 @@ $nombre_usuario_actual = $_SESSION['usuario'];
             font-weight: 700;
         }
 
-        /* Pie de tarjeta con botón eliminar */
+        /* Pie de tarjeta con botones */
         .liga-card-footer {
             padding: 12px 22px;
             border-top: 1px solid rgba(255,255,255,0.05);
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
         }
 
+        /* Botón Mercado (Cian) */
+        .btn-mercado {
+            display: inline-block;
+            background: none;
+            border: 1px solid rgba(29, 242, 221, 0.4);
+            color: #1DF2DD;
+            padding: 6px 16px;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .btn-mercado:hover {
+            background: rgba(29, 242, 221, 0.1);
+            border-color: #1DF2DD;
+            color: #fff;
+        }
+
+        /* Botón Eliminar (Rojo) */
         .btn-eliminar {
             background: none;
             border: 1px solid rgba(166, 50, 71, 0.4);
@@ -287,15 +311,18 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                         <div class="dato"><span>POSICIÓN</span><span>#${liga.posicion_actual}</span></div>
                     </a>
                     <div class="liga-card-footer">
+                        <a href="mercado.php?id_liga=${encodeURIComponent(liga.id_liga)}" class="btn-mercado">
+                            🛒 MERCADO
+                        </a>
                         <button class="btn-eliminar" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">
-                            ✕ ELIMINAR LIGA
+                            ✕ ELIMINAR
                         </button>
                     </div>`;
 
                 contenedor.appendChild(card);
             });
 
-            // Delegación de eventos para los botones de eliminar
+            // Delegación de eventos EXCLUSIVAMENTE para los botones de eliminar
             contenedor.querySelectorAll('.btn-eliminar').forEach(btn => {
                 btn.addEventListener('click', manejarEliminar);
             });
@@ -362,12 +389,12 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                 } else {
                     mostrarNotificacion('ERROR: ' + (json.message || 'Operación fallida'), 'error', 4000);
                     btn.disabled    = false;
-                    btn.textContent = '✕ ELIMINAR LIGA';
+                    btn.textContent = '✕ ELIMINAR';
                 }
             } catch (err) {
                 mostrarNotificacion('ERROR DE CONEXIÓN CON EL SERVIDOR', 'error', 4000);
                 btn.disabled    = false;
-                btn.textContent = '✕ ELIMINAR LIGA';
+                btn.textContent = '✕ ELIMINAR';
             }
         }
 
