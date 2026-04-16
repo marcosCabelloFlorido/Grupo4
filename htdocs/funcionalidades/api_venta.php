@@ -29,6 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$jugador) throw new Exception("No posees a este jugador o no tienes permisos.");
 
+        // 1b. Verificar que el equipo no se queda sin jugadores (protección anti-exploit dinero infinito)
+        $stmtConteo = $conexion->prepare("SELECT COUNT(*) FROM alineaciones WHERE id_equipo_fantasy = :id_ef");
+        $stmtConteo->execute([':id_ef' => $id_equipo]);
+        $total_jugadores = (int)$stmtConteo->fetchColumn();
+        if ($total_jugadores <= 1) {
+            throw new Exception("No puedes vender a tu último jugador. Necesitas al menos un agente en la plantilla.");
+        }
+
         // 2. Calcular precio de venta (80% del valor de mercado)
         $precio_venta = $jugador['precio_mercado'] * 0.80;
 

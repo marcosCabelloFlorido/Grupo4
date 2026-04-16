@@ -172,6 +172,10 @@ function getIcon($rol) {
     $iconos = ['Duelista'=>'⚔', 'Iniciador'=>'🔍', 'Centinela'=>'🛡', 'Smoker'=>'🌀'];
     return $iconos[$rol] ?? '•';
 }
+function getColor($rol) {
+    $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dffb8', 'Centinela'=>'#4d9fff', 'Smoker'=>'#c084fc'];
+    return $colores[$rol] ?? '#6b6b7a';
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -180,114 +184,293 @@ function getIcon($rol) {
     <title>Mercado — VALTASY</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cyan: #1DF2DD; --cyan-dark: #168C77;
+            --red: #8C0813; --red-soft: #A63247;
+            --bg: #0d0d0f; --bg-card: #141418;
+            --text: #e8e8ee; --muted: #6b6b7a;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0d0d0f; color: #e8e8ee; font-family: 'Barlow Condensed'; padding: 40px; }
-        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #1DF2DD; padding-bottom: 20px; margin-bottom: 30px; }
-        .grid-agentes { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        .card-agente { background: #141418; border: 1px solid rgba(29,242,221,0.2); padding: 25px 20px; text-align: center; position: relative;}
-        .card-agente.pujado { border-color: #A63247; background: rgba(140, 8, 19, 0.05); }
-        .input-puja { width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #1DF2DD; font-family: 'Orbitron'; font-size: 1rem; text-align: center; margin-bottom: 10px; }
-        .btn-comprar { width: 100%; padding: 12px; background: #1DF2DD; color: #000; font-weight: bold; font-family:'Barlow Condensed'; border: none; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; transition: 0.2s;}
-        .btn-comprar:hover { background: #168C77; color: #fff; }
-        .btn-cancelar { width: 100%; padding: 12px; background: transparent; border: 1px solid #A63247; color: #A63247; font-weight: bold; font-family:'Barlow Condensed'; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; margin-top: 10px; transition: 0.2s;}
-        .btn-cancelar:hover { background: rgba(140, 8, 19, 0.2); color: #ff6b80; }
-        .alert { padding: 15px; margin-bottom: 20px; text-align: center; font-weight: bold; }
-        .alert.exito { background: rgba(29,242,221,0.2); border: 1px solid #1DF2DD; color: #1DF2DD; }
-        .alert.error { background: rgba(140,8,19,0.2); border: 1px solid #A63247; color: #ff6b80; }
-        .timer { font-family: 'Orbitron'; font-size: 1.2rem; color: #1DF2DD; margin-bottom: 30px; text-align: center; background: #141418; padding: 15px; border: 1px solid rgba(29,242,221,0.2);}
-        .tag-pujado { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #A63247; color: #fff; padding: 4px 12px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; white-space: nowrap;}
+        body {
+            background: var(--bg); color: var(--text);
+            font-family: 'Barlow Condensed', sans-serif;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse 50% 50% at 50% 50%, rgba(140,8,19,0.10) 0%, transparent 70%),
+                linear-gradient(rgba(29,242,221,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(29,242,221,0.02) 1px, transparent 1px);
+            background-size: cover, 60px 60px, 60px 60px;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 36px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: rgba(13,13,15,0.92); backdrop-filter: blur(8px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 20px; }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: var(--muted); text-decoration: none; font-size: 0.78rem;
+            font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+            transition: color 0.2s;
+        }
+        .btn-back:hover { color: var(--cyan); }
+        .topbar-title { font-family: 'Orbitron'; font-size: 0.82rem; color: var(--text); letter-spacing: 0.08em; }
+        .topbar-right { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .budget-display {
+            display: flex; flex-direction: column; align-items: flex-end;
+        }
+        .budget-label { font-size: 0.65rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+        .budget-val { font-family: 'Orbitron'; font-size: 1.1rem; color: var(--cyan); font-weight: 700; }
+        .btn-plantilla {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 20px; background: transparent;
+            border: 1px solid rgba(29,242,221,0.4);
+            color: var(--cyan); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em;
+            text-transform: uppercase; text-decoration: none;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-plantilla:hover { background: rgba(29,242,221,0.08); box-shadow: 0 4px 20px rgba(29,242,221,0.2); }
+
+        /* ── MAIN ── */
+        .main { padding: 32px 36px; }
+
+        /* ── ALERT ── */
+        .alert {
+            padding: 14px 20px; margin-bottom: 28px;
+            font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em;
+            border-left: 4px solid;
+        }
+        .alert.exito { background: rgba(29,242,221,0.08); border-color: var(--cyan); color: var(--cyan); }
+        .alert.error { background: rgba(140,8,19,0.15); border-color: var(--red-soft); color: #ff6b80; }
+
+        /* ── TIMER ── */
+        .timer-bar {
+            display: flex; align-items: center; justify-content: center; gap: 14px;
+            background: var(--bg-card); border: 1px solid rgba(29,242,221,0.15);
+            border-left: 4px solid var(--cyan);
+            padding: 16px 24px; margin-bottom: 30px;
+        }
+        .timer-label { font-size: 0.75rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+        .timer-val { font-family: 'Orbitron'; font-size: 1.3rem; color: var(--cyan); min-width: 90px; }
+        .timer-hint { font-size: 0.78rem; color: var(--muted); }
+
+        /* ── GRID ── */
+        .seccion-titulo {
+            font-family: 'Orbitron'; font-size: 0.75rem; letter-spacing: 0.15em;
+            color: var(--muted); text-transform: uppercase; margin-bottom: 18px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .seccion-titulo::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+        .seccion-titulo .cnt { color: var(--cyan); }
+
+        .grid-agentes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* ── CARD AGENTE ── */
+        .card-agente {
+            background: var(--bg-card);
+            border: 1px solid rgba(29,242,221,0.12);
+            border-top: 3px solid rgba(29,242,221,0.25);
+            padding: 22px 20px 18px;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+        .card-agente:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.35); border-color: rgba(29,242,221,0.3); }
+        .card-agente.pujado { border-top-color: var(--red-soft); border-color: rgba(166,50,71,0.35); background: rgba(140,8,19,0.04); }
+        .card-agente.pujado:hover { border-color: rgba(166,50,71,0.55); }
+
+        .tag-pujado {
+            position: absolute; top: -1px; right: 16px;
+            background: var(--red-soft); color: #fff;
+            padding: 3px 10px; font-size: 0.68rem; font-weight: 700;
+            letter-spacing: 0.1em; text-transform: uppercase;
+        }
+
+        .rol-tag { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+        .jugador-nick { font-family: 'Orbitron'; font-size: 1rem; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .jugador-media { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
+
+        .precio-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
+        .precio-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .precio-val { font-family: 'Orbitron'; font-size: 1.25rem; color: var(--cyan); font-weight: 700; }
+        .media-mini { text-align: right; }
+        .media-mini .precio-label { display: block; }
+        .media-mini .precio-val { font-size: 1rem; color: var(--text); }
+
+        .divider { height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 16px; }
+
+        .input-puja {
+            width: 100%; padding: 11px 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--cyan); font-family: 'Orbitron'; font-size: 1rem;
+            text-align: center; margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+        .input-puja:focus { outline: none; border-color: rgba(29,242,221,0.5); background: rgba(29,242,221,0.04); }
+        .input-hint { font-size: 0.72rem; color: var(--muted); text-align: center; margin-bottom: 12px; letter-spacing: 0.04em; }
+
+        .btn-comprar {
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--cyan-dark), var(--cyan));
+            color: #000; font-weight: 700; font-family: 'Barlow Condensed';
+            border: none; cursor: pointer; text-transform: uppercase;
+            font-size: 1rem; letter-spacing: 0.08em;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+            transition: box-shadow 0.2s;
+        }
+        .btn-comprar:hover { box-shadow: 0 4px 20px rgba(29,242,221,0.4); }
+
+        .mi-oferta-box { text-align: center; margin-bottom: 4px; }
+        .mi-oferta-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+        .mi-oferta-val { font-family: 'Orbitron'; font-size: 1.1rem; color: #ff6b80; font-weight: 700; }
+
+        .btn-cancelar {
+            width: 100%; padding: 11px; margin-top: 10px;
+            background: transparent; border: 1px solid rgba(166,50,71,0.5);
+            color: var(--red-soft); font-weight: 700; font-family: 'Barlow Condensed';
+            cursor: pointer; text-transform: uppercase; font-size: 0.95rem;
+            letter-spacing: 0.08em; transition: background 0.2s, color 0.2s;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+        }
+        .btn-cancelar:hover { background: rgba(140,8,19,0.25); color: #ff6b80; }
+
+        /* ── SIN MERCADO ── */
+        .empty-state {
+            text-align: center; padding: 80px 20px; color: var(--muted);
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.4; }
+        .empty-state p { font-size: 1rem; letter-spacing: 0.06em; }
+
+        @media (max-width: 600px) {
+            .topbar { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+            .main { padding: 20px 16px; }
+            .grid-agentes { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 style="font-family:'Orbitron'">MERCADO DE PUJAS</h1>
-        <div style="text-align:right">
-            <p>FONDOS DISPONIBLES: <span style="color:#1DF2DD; font-weight:bold; font-size:1.4rem;"><?php echo number_format($datos_equipo['presupuesto_disponible'] ?? 0, 0, ',', '.'); ?> €</span></p>
-            <br><a href="cliente.php" style="color:#6b6b7a; text-decoration:none;">← DASHBOARD</a>
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <a href="cliente.php" class="btn-back">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                Dashboard
+            </a>
+            <span class="topbar-title">🛒 MERCADO DE PUJAS — <?php echo htmlspecialchars($datos_equipo['nombre_liga'] ?? ''); ?></span>
+        </div>
+        <div class="topbar-right">
+            <div class="budget-display">
+                <span class="budget-label">Fondos disponibles</span>
+                <span class="budget-val"><?php echo number_format($datos_equipo['presupuesto_disponible'] ?? 0, 0, ',', '.'); ?> €</span>
+            </div>
+            <a href="ver_liga.php?id_liga=<?php echo $id_liga; ?>" class="btn-plantilla">⚔ Mi Plantilla</a>
         </div>
     </div>
 
-    <?php if ($mensaje): ?>
-        <div class="alert <?php echo $mensaje['tipo']; ?>"><?php echo $mensaje['texto']; ?></div>
-    <?php endif; ?>
+    <div class="main">
+        <?php if ($mensaje): ?>
+            <div class="alert <?php echo $mensaje['tipo']; ?>"><?php echo htmlspecialchars($mensaje['texto']); ?></div>
+        <?php endif; ?>
 
-    <?php if (!empty($mercado_list)): ?>
-        <div class="timer">⏳ RESOLUCIÓN DE PUJAS EN: <span id="countdown">--:--:--</span></div>
-        <div class="grid-agentes">
-            <?php foreach ($mercado_list as $j): ?>
+        <?php if (!empty($mercado_list)): ?>
+            <div class="timer-bar">
+                <span class="timer-label">⏳ Resolución de pujas en:</span>
+                <span class="timer-val" id="countdown">--:--:--</span>
+                <span class="timer-hint">· La puja más alta de cada agente gana</span>
+            </div>
+
+            <div class="seccion-titulo">
+                Agentes disponibles <span class="cnt"><?php echo count($mercado_list); ?></span>
+            </div>
+
+            <div class="grid-agentes">
+                <?php foreach ($mercado_list as $j): ?>
                 <div class="card-agente <?php echo $j['mi_puja'] ? 'pujado' : ''; ?>">
-                    <?php if($j['mi_puja']): ?>
-                        <div class="tag-pujado">Oferta Lanzada</div>
-                    <?php endif; ?>
-                    <p style="color:#6b6b7a; font-size:0.8rem;"><?php echo getIcon($j['rol']); ?> <?php echo strtoupper($j['rol']); ?></p>
-                    <h2 style="font-family:'Orbitron'; color:#fff; margin:10px 0;"><?php echo htmlspecialchars($j['nickname']); ?></h2>
-                    <p style="color:#6b6b7a; font-size:0.9rem;">Valor de mercado:</p>
-                    <p style="color:#1DF2DD; font-weight:bold; font-size:1.4rem; margin-bottom: 10px;"><?php echo number_format($j['precio_mercado'], 0, ',', '.'); ?> €</p>
-                    
+                    <?php if($j['mi_puja']): ?><div class="tag-pujado">✓ Oferta enviada</div><?php endif; ?>
+
+                    <div class="rol-tag" style="color:<?php echo getColor($j['rol']); ?>"><?php echo getIcon($j['rol']); ?> <?php echo strtoupper($j['rol']); ?></div>
+                    <div class="jugador-nick"><?php echo htmlspecialchars($j['nickname']); ?></div>
+                    <div class="jugador-media">Media: <?php echo number_format($j['media_punto'], 1); ?> pts/jornada</div>
+
+                    <div class="precio-row">
+                        <div>
+                            <div class="precio-label">Valor de mercado</div>
+                            <div class="precio-val"><?php echo number_format($j['precio_mercado'], 0, ',', '.'); ?> €</div>
+                        </div>
+                        <div class="media-mini">
+                            <span class="precio-label">Puja mín.</span>
+                            <div class="precio-val" style="font-size:0.9rem; color:var(--muted);"><?php echo number_format($j['precio_mercado'], 0, ',', '.'); ?> €</div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
                     <?php if(!$j['mi_puja']): ?>
                         <form method="POST">
                             <input type="hidden" name="id_mercado" value="<?php echo $j['id_mercado']; ?>">
-                            <input type="number" name="monto_puja" class="input-puja" min="<?php echo $j['precio_mercado']; ?>" value="<?php echo $j['precio_mercado']; ?>" required>
-                            <button type="submit" class="btn-comprar">OFRECER PUJA CIEGA</button>
+                            <input type="number" name="monto_puja" class="input-puja"
+                                   min="<?php echo $j['precio_mercado']; ?>"
+                                   value="<?php echo $j['precio_mercado']; ?>" required>
+                            <div class="input-hint">Puja ciega — otros no ven tu oferta</div>
+                            <button type="submit" class="btn-comprar">Lanzar Oferta</button>
                         </form>
                     <?php else: ?>
-                        <p style="color:#e8e8ee; font-size:0.9rem; margin-top: 15px;">Tu oferta actual:</p>
-                        <p style="color:#ff6b80; font-weight:bold; font-size:1.2rem; font-family:'Orbitron';"><?php echo number_format($j['mi_puja'], 0, ',', '.'); ?> €</p>
-                        <button class="btn-cancelar" onclick="cancelarPuja(<?php echo $j['id_mercado']; ?>)">Retirar Oferta</button>
+                        <div class="mi-oferta-box">
+                            <div class="mi-oferta-label">Tu oferta actual</div>
+                            <div class="mi-oferta-val"><?php echo number_format($j['mi_puja'], 0, ',', '.'); ?> €</div>
+                        </div>
+                        <button class="btn-cancelar" onclick="cancelarPuja(<?php echo $j['id_mercado']; ?>)">↩ Retirar Oferta</button>
                     <?php endif; ?>
                 </div>
-            <?php endforeach; ?>
-        </div>
+                <?php endforeach; ?>
+            </div>
 
-        <script>
-            async function cancelarPuja(idMercado) {
-                if (!confirm('¿Estás seguro de que quieres retirar tu puja? Recuperarás tu dinero inmediatamente para poder fichar a otro agente.')) return;
-                
-                try {
-                    const res = await fetch('api_cancelar_puja.php', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            id_equipo: <?php echo $id_equipo; ?>,
-                            id_mercado: idMercado
-                        })
-                    });
-                    const json = await res.json();
-                    if (json.status === 'success') {
-                        window.location.href = window.location.href; 
-                    } else {
-                        alert("Error: " + json.message);
+            <script>
+                async function cancelarPuja(idMercado) {
+                    if (!confirm('¿Retirar tu puja?\n\nRecuperarás el dinero inmediatamente.')) return;
+                    try {
+                        const res = await fetch('api_cancelar_puja.php', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({ id_equipo: <?php echo $id_equipo; ?>, id_mercado: idMercado })
+                        });
+                        const json = await res.json();
+                        if (json.status === 'success') location.reload();
+                        else alert("Error: " + json.message);
+                    } catch(e) { alert("Error de conexión."); }
+                }
+
+                const fechaFin = new Date("<?php echo $fecha_fin_js; ?>").getTime();
+                const x = setInterval(function() {
+                    const dist = fechaFin - new Date().getTime();
+                    if (dist < 0) {
+                        clearInterval(x);
+                        document.getElementById("countdown").innerHTML = "RESOLVIENDO...";
+                        setTimeout(() => location.reload(), 2500);
+                        return;
                     }
-                } catch (e) { 
-                    alert("Error de conexión al intentar cancelar la puja."); 
-                }
-            }
+                    const h = Math.floor((dist % (1000*60*60*24)) / (1000*60*60));
+                    const m = Math.floor((dist % (1000*60*60)) / (1000*60));
+                    const s = Math.floor((dist % (1000*60)) / 1000);
+                    document.getElementById("countdown").innerHTML =
+                        String(h).padStart(2,'0') + ":" + String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+                }, 1000);
+            </script>
 
-            const fechaFin = new Date("<?php echo $fecha_fin_js; ?>").getTime();
-            
-            const x = setInterval(function() {
-                const ahora = new Date().getTime();
-                const distancia = fechaFin - ahora;
-
-                if (distancia < 0) {
-                    clearInterval(x);
-                    document.getElementById("countdown").innerHTML = "RESOLVIENDO...";
-                    setTimeout(() => location.reload(), 2000);
-                    return;
-                }
-
-                const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-                const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
-
-                document.getElementById("countdown").innerHTML = 
-                    horas.toString().padStart(2, '0') + ":" + 
-                    minutos.toString().padStart(2, '0') + ":" + 
-                    segundos.toString().padStart(2, '0');
-            }, 1000);
-        </script>
-    <?php else: ?>
-        <p style="text-align:center; color:#6b6b7a;">No hay jugadores en el mercado actualmente.</p>
-    <?php endif; ?>
+        <?php else: ?>
+            <div class="empty-state">
+                <div class="icon">🔍</div>
+                <p>No hay agentes en el mercado en este momento.</p>
+            </div>
+        <?php endif; ?>
+    </div>
 </body>
 </html>
