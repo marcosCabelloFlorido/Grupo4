@@ -123,9 +123,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $mail->AltBody = "Agente $usuario,\n\nTu registro en VALTASY ha sido procesado con éxito.\n\nUsuario: $usuario\nEmail: $email\n\nFin de la transmisión.\n— Agencia VALTASY";
                 $mail->send();
-                $mensaje = "<div class='mensaje exito'><span class='msg-icon'>✓</span> ¡Agente registrado con éxito! Revisa tu correo para confirmar el acceso.</div>";
+                $_SESSION['mensaje_registro'] = "<div class='mensaje exito'><span class='msg-icon'>✓</span> ¡Agente <strong>$usuario</strong> registrado con éxito! Revisa tu correo para confirmar el acceso.</div>";
             } catch (Exception $e) {
-                $mensaje = "<div class='mensaje exito'><span class='msg-icon'>✓</span> ¡Agente registrado con éxito! (El correo de confirmación no pudo enviarse)</div>";
+                $_SESSION['mensaje_registro'] = "<div class='mensaje exito'><span class='msg-icon'>✓</span> ¡Agente <strong>$usuario</strong> registrado con éxito! (El correo de confirmación no pudo enviarse)</div>";
             }
 
             // REDIRECCIÓN PARA EVITAR REENVÍO DE FORMULARIO AL RECARGAR
