@@ -28,25 +28,12 @@ $nombre_usuario_actual = $_SESSION['usuario'];
         .exito { color: #1DF2DD; border: 1px solid #1DF2DD; background: rgba(29, 242, 221, 0.1); }
         .error { color: #A63247; border: 1px solid #A63247; background: rgba(140, 8, 19, 0.2); }
 
-        /* Modal para mostrar el código de acceso */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .modal-overlay.hidden { display: none; }
         .modal-box { background: #141418; border: 2px solid #1DF2DD; padding: 40px; max-width: 440px; width: 90%; text-align: center; }
         .modal-box h2 { font-family: 'Orbitron'; color: #1DF2DD; margin-bottom: 10px; font-size: 1rem; letter-spacing: 0.1em; }
         .modal-box p { color: #6b6b7a; margin-bottom: 20px; font-size: 0.95rem; }
-        .codigo-display {
-            font-family: 'Orbitron';
-            font-size: 2rem;
-            letter-spacing: 0.3em;
-            color: #fff;
-            background: rgba(29, 242, 221, 0.08);
-            border: 2px dashed #1DF2DD;
-            padding: 18px 24px;
-            margin-bottom: 24px;
-            cursor: pointer;
-            user-select: all;
-            transition: background 0.2s;
-        }
+        .codigo-display { font-family: 'Orbitron'; font-size: 2rem; letter-spacing: 0.3em; color: #fff; background: rgba(29, 242, 221, 0.08); border: 2px dashed #1DF2DD; padding: 18px 24px; margin-bottom: 24px; cursor: pointer; user-select: all; transition: background 0.2s; }
         .codigo-display:hover { background: rgba(29, 242, 221, 0.15); }
         .aviso-codigo { font-size: 0.8rem; color: #A63247; margin-bottom: 20px; letter-spacing: 0.05em; }
         .btn-modal { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #168C77, #1DF2DD); color: #000; font-weight: 700; text-decoration: none; text-transform: uppercase; cursor: pointer; border: none; font-family: 'Barlow Condensed'; font-size: 1rem; clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%); }
@@ -76,12 +63,19 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                 <option value="Publica">No Clasificada (Pública)</option>
             </select>
 
+            <label>Torneo a simular:</label>
+            <select id="torneoLiga">
+                <option value="VCT EMEA - Kickoff">VCT EMEA - Kickoff</option>
+                <option value="VCT EMEA - Fase Regular">VCT EMEA - Fase Regular</option>
+                <option value="VCT EMEA - Playoffs">VCT EMEA - Playoffs</option>
+                <option value="VCT EMEA - Last Chance">VCT EMEA - LCQ</option>
+            </select>
+
             <button type="submit">Iniciar Operación</button>
         </form>
         <div id="mensaje"></div>
     </div>
 
-    <!-- Modal código de acceso (solo ligas privadas) -->
     <div id="modalCodigo" class="modal-overlay hidden">
         <div class="modal-box">
             <h2>⚡ OPERACIÓN AUTORIZADA</h2>
@@ -103,7 +97,8 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                 nombre_usuario: document.getElementById("nombreUsuario").value,
                 nombre_liga:    document.getElementById("nombreLiga").value,
                 nombre_equipo:  document.getElementById("nombreEquipo").value,
-                tipo:           document.getElementById("tipoLiga").value
+                tipo:           document.getElementById("tipoLiga").value,
+                torneo:         document.getElementById("torneoLiga").value // Enviamos el torneo
             };
 
             try {
@@ -119,11 +114,9 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                     document.getElementById("formCrearLiga").reset();
 
                     if (json.codigo_acceso) {
-                        // Liga privada: mostrar modal con código
                         document.getElementById("codigoTexto").textContent = json.codigo_acceso;
                         document.getElementById("modalCodigo").classList.remove("hidden");
                     } else {
-                        // Liga pública: ir directo al dashboard
                         divMensaje.style.display = "block";
                         divMensaje.className     = "exito";
                         divMensaje.textContent   = "¡Operación autorizada! Liga pública creada con éxito.";
@@ -141,7 +134,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
             }
         });
 
-        // Copiar código al portapapeles al hacer clic
         document.getElementById("codigoTexto").addEventListener("click", async () => {
             const codigo = document.getElementById("codigoTexto").textContent;
             try {
@@ -152,9 +144,7 @@ $nombre_usuario_actual = $_SESSION['usuario'];
             } catch (_) {}
         });
 
-        function irAlDashboard() {
-            window.location.href = "cliente.php";
-        }
+        function irAlDashboard() { window.location.href = "cliente.php"; }
     </script>
 </body>
 </html>

@@ -386,9 +386,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         MODAL: UNIRSE A LIGA
-    ══════════════════════════════════════════════════════════════ -->
     <div id="modalUnirse" class="modal-overlay hidden">
         <div class="modal-box">
             <h2>// ACCESO A OPERACIÓN EXISTENTE</h2>
@@ -398,7 +395,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                 <div class="modal-tab" data-tab="publica">🌐 Liga Pública</div>
             </div>
 
-            <!-- TAB: LIGA PRIVADA (por código) -->
             <div class="tab-panel activo" id="tab-privada">
                 <p style="color:#6b6b7a; font-size:0.9rem; margin-bottom:20px;">Introduce el código de acceso que te ha compartido el creador de la liga.</p>
                 <div id="errorPrivada" class="modal-error"></div>
@@ -409,7 +405,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                 <button class="btn-modal-accion" id="btnUnirsePrivada">CONFIRMAR ACCESO</button>
             </div>
 
-            <!-- TAB: LIGA PÚBLICA -->
             <div class="tab-panel" id="tab-publica">
                 <p style="color:#6b6b7a; font-size:0.9rem; margin-bottom:16px;">Selecciona una operación pública disponible.</p>
                 <div id="errorPublica" class="modal-error"></div>
@@ -438,6 +433,17 @@ $nombre_usuario_actual = $_SESSION['usuario'];
             setTimeout(() => { notif.style.display = 'none'; }, duracion);
         }
 
+        // ── Escapa HTML para evitar XSS ────────────────────────────────────
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         // ── Renderiza tarjetas de ligas ───────────────────────────────────────
         function renderizarLigas(ligas) {
             const contenedor = document.getElementById('contenedorLigas');
@@ -461,10 +467,12 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                 card.className  = 'liga-card';
                 card.dataset.idLiga = liga.id_liga;
 
+                // AQUÍ AÑADIMOS EL TORNEO
                 card.innerHTML = `
                     <a href="ver_liga.php?id_liga=${encodeURIComponent(liga.id_liga)}" class="liga-card-link">
                         <span class="badge-tipo ${tipoBadge}">${tipoLabel}</span>
                         <h3>${escapeHtml(liga.nombre_liga)}</h3>
+                        <div class="dato"><span>TORNEO</span><span style="color:#c084fc;">${escapeHtml(liga.torneo || 'VCT EMEA - Fase Regular')}</span></div>
                         <div class="dato"><span>ESCUADRÓN</span><span>${escapeHtml(liga.nombre_equipo)}</span></div>
                         <div class="dato"><span>PUNTOS</span><span>${liga.puntos_equipo}</span></div>
                         <div class="dato"><span>PRESUPUESTO</span><span>${presupuesto} €</span></div>
@@ -712,17 +720,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
                 btn.textContent = 'UNIRSE A LA OPERACIÓN';
             }
         });
-
-        // ── Escapa HTML para evitar XSS ────────────────────────────────────
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
 
         // ── Inicio ────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', cargarLigas);
