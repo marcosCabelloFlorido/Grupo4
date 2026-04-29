@@ -46,6 +46,36 @@ $nombre_usuario_actual = $_SESSION['usuario'];
         .header-right a { color: #6b6b7a; text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
         .header-right a:hover { color: #A63247; }
 
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid rgba(29, 242, 221, 0.12);
+        }
+        .nav-tab {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #6b6b7a;
+            text-decoration: none;
+            padding: 10px 22px;
+            border: 1px solid transparent;
+            border-bottom: none;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+            transition: color 0.2s, background 0.2s;
+            position: relative;
+            top: 1px;
+        }
+        .nav-tab:hover { color: #1DF2DD; }
+        .nav-tab.activo {
+            color: #1DF2DD;
+            background: #141418;
+            border-color: rgba(29, 242, 221, 0.25);
+            border-bottom-color: #141418;
+        }
+
         .btn-crear {
             display: inline-block;
             padding: 12px 28px;
@@ -399,6 +429,12 @@ $nombre_usuario_actual = $_SESSION['usuario'];
             <a href="../sesion/cerrar.php">[ DESCONECTAR ]</a>
         </div>
     </div>
+
+    <nav class="nav-tabs">
+        <a href="cliente.php"    class="nav-tab activo">Dashboard</a>
+        <a href="crear_liga.php" class="nav-tab">Nueva Liga</a>
+        <a href="noticias.php"   class="nav-tab">Noticias</a>
+    </nav>
 
     <div class="seccion-header">
         <h2>// Operaciones Activas</h2>

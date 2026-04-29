@@ -26,7 +26,11 @@ $nombre_usuario_actual = $_SESSION['usuario'];
             background-size: cover, 60px 60px, 60px 60px;
         }
         h1, h2 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #A63247; padding-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #A63247; padding-bottom: 20px; }
+        .nav-tabs { display: flex; gap: 4px; margin-bottom: 32px; border-bottom: 1px solid rgba(29, 242, 221, 0.12); }
+        .nav-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6b7a; text-decoration: none; padding: 10px 22px; border: 1px solid transparent; border-bottom: none; clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%); transition: color 0.2s, background 0.2s; position: relative; top: 1px; }
+        .nav-tab:hover { color: #1DF2DD; }
+        .nav-tab.activo { color: #1DF2DD; background: #141418; border-color: rgba(29, 242, 221, 0.25); border-bottom-color: #141418; }
         .card { background: #141418; border: 1px solid rgba(29, 242, 221, 0.12); padding: 40px; max-width: 500px; margin: 0 auto; }
         input[type="text"], select { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #e8e8ee; margin-bottom: 20px; font-family: 'Barlow Condensed'; font-size: 1rem; }
         input[type="text"]:focus, select:focus { outline: none; border-color: rgba(29,242,221,0.4); }
@@ -202,8 +206,17 @@ $nombre_usuario_actual = $_SESSION['usuario'];
             <h1>VALTASY <span style="font-size:0.5em; color:gray;">CREACIÓN</span></h1>
             <span id="badgePremiumHeader"></span>
         </div>
-        <a href="cliente.php" class="btn-volver">← VOLVER AL DASHBOARD</a>
+        <div style="text-align:right;">
+            <p style="font-size:1rem; color:#6b6b7a; margin-bottom:4px;">AGENTE: <span style="color:#1DF2DD; font-weight:700;"><?php echo htmlspecialchars($nombre_usuario_actual); ?></span></p>
+            <a href="../sesion/cerrar.php" style="color:#6b6b7a; text-decoration:none; font-size:0.85rem;">[ DESCONECTAR ]</a>
+        </div>
     </div>
+
+    <nav class="nav-tabs">
+        <a href="cliente.php"    class="nav-tab">Dashboard</a>
+        <a href="crear_liga.php" class="nav-tab activo">Nueva Liga</a>
+        <a href="noticias.php"   class="nav-tab">Noticias</a>
+    </nav>
 
     <div class="card">
         <h2>Crear Liga</h2><br>

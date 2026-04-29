@@ -184,7 +184,11 @@ function getColor($rol) {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: var(--text); font-family: 'Barlow Condensed', sans-serif; padding: 40px; min-height: 100vh; background-image: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(29,242,221,0.05) 0%, transparent 70%); }
         
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--cyan); padding-bottom: 20px; margin-bottom: 30px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--cyan); padding-bottom: 20px; margin-bottom: 16px; }
+        .nav-tabs { display: flex; gap: 4px; margin-bottom: 28px; border-bottom: 1px solid rgba(29, 242, 221, 0.12); }
+        .nav-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6b7a; text-decoration: none; padding: 10px 22px; border: 1px solid transparent; border-bottom: none; clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%); transition: color 0.2s, background 0.2s; position: relative; top: 1px; }
+        .nav-tab:hover { color: #1DF2DD; }
+        .nav-tab.activo { color: #1DF2DD; background: #141418; border-color: rgba(29, 242, 221, 0.25); border-bottom-color: #141418; }
         .header h1 { font-family: 'Orbitron'; font-size: 2rem; color: var(--cyan); }
         .header-info { text-align: right; }
         .fondos { color: var(--cyan); font-size: 1.4rem; font-weight: bold; font-family: 'Orbitron'; }
@@ -235,6 +239,12 @@ function getColor($rol) {
             <a href="ver_liga.php?id_liga=<?php echo $id_liga; ?>" class="btn-volver">← Volver al Escuadrón</a>
         </div>
     </div>
+
+    <nav class="nav-tabs">
+        <a href="cliente.php"    class="nav-tab">Dashboard</a>
+        <a href="crear_liga.php" class="nav-tab">Nueva Liga</a>
+        <a href="noticias.php"   class="nav-tab">Noticias</a>
+    </nav>
 
     <?php if ($mensaje): ?>
         <div class="alert <?php echo $mensaje['tipo']; ?>"><?php echo htmlspecialchars($mensaje['texto']); ?></div>

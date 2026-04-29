@@ -135,6 +135,10 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
         }
         
         .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 36px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(13,13,15,0.9); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; }
+        .nav-sub { display: flex; gap: 4px; padding: 0 36px; border-bottom: 1px solid rgba(29, 242, 221, 0.12); background: rgba(13,13,15,0.9); position: sticky; top: 57px; z-index: 99; }
+        .nav-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6b7a; text-decoration: none; padding: 10px 22px; border: 1px solid transparent; border-bottom: none; clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%); transition: color 0.2s, background 0.2s; position: relative; top: 1px; }
+        .nav-tab:hover { color: #1DF2DD; }
+        .nav-tab.activo { color: #1DF2DD; background: #141418; border-color: rgba(29, 242, 221, 0.25); border-bottom-color: #141418; }
         .topbar-left { display: flex; align-items: center; gap: 20px; }
         .btn-back { color: var(--muted); text-decoration: none; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
         .topbar-title { font-family: 'Orbitron'; font-size: 0.85rem; color: var(--text); letter-spacing: 0.1em; }
@@ -298,6 +302,12 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
         <a href="mercado.php?id_liga=<?php echo $id_liga; ?>" class="btn-mercado-top">🛒 MERCADO</a>
     </div>
 </div>
+
+<nav class="nav-sub">
+    <a href="cliente.php"    class="nav-tab">Dashboard</a>
+    <a href="crear_liga.php" class="nav-tab">Nueva Liga</a>
+    <a href="noticias.php"   class="nav-tab">Noticias</a>
+</nav>
 
 <div class="liga-hero">
     <h1 class="liga-nombre"><?php echo htmlspecialchars($liga_info['nombre_liga']); ?></h1>
