@@ -30,9 +30,8 @@ $nombre_usuario_actual = $_SESSION['usuario'];
     </div>
 
     <nav class="nav-tabs">
-        <a href="cliente.php"    class="nav-tab">Dashboard</a>
-        <a href="crear_liga.php" class="nav-tab activo">Nueva Liga</a>
-        <a href="noticias.php"   class="nav-tab">Noticias</a>
+        <a href="cliente.php"  class="nav-tab">Dashboard</a>
+        <a href="noticias.php" class="nav-tab">Noticias</a>
     </nav>
 
     <div class="card">
@@ -71,7 +70,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
         <div id="mensaje"></div>
     </div>
 
-    <!-- Modal: código de acceso para liga privada -->
     <div id="modalCodigo" class="modal-overlay hidden">
         <div class="modal-box">
             <h2>⚡ OPERACIÓN AUTORIZADA</h2>
@@ -83,7 +81,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
         </div>
     </div>
 
-    <!-- Modal: comprar Premium -->
     <div id="modalPremium" class="modal-overlay hidden">
         <div class="modal-premium-box">
             <div class="premium-header">

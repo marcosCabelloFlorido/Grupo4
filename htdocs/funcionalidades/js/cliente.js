@@ -1,9 +1,14 @@
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════════════════
    cliente.js — JavaScript del Dashboard de VALTASY
    Requiere: USUARIO_ACTUAL definido inline en el PHP
-   ═══════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 let ligaPublicaSeleccionada = null;
+
+// Variables Globales Premium
+let esPremium = false;
+let planMeses  = 1;
+const precios    = { 1: '4,99€', 3: '12,99€', 6: '22,99€', 12: '39,99€' };
 
 /* ── Notificación flotante ──────────────────────────────── */
 function mostrarNotificacion(texto, tipo = 'exito', duracion = 3000) {
@@ -145,10 +150,10 @@ document.getElementById('btnAbrirModalUnirse').addEventListener('click', () => {
     cargarLigasPublicasModal();
 });
 
-document.getElementById('btnCerrarModal').addEventListener('click', cerrarModal);
-modal.addEventListener('click', (e) => { if (e.target === modal) cerrarModal(); });
+document.getElementById('btnCerrarModal').addEventListener('click', cerrarModalUnirse);
+modal.addEventListener('click', (e) => { if (e.target === modal) cerrarModalUnirse(); });
 
-function cerrarModal() {
+function cerrarModalUnirse() {
     modal.classList.add('hidden');
     document.getElementById('inputCodigo').value         = '';
     document.getElementById('nombreEquipoPrivada').value = '';
@@ -233,7 +238,7 @@ document.getElementById('btnUnirsePrivada').addEventListener('click', async () =
         const json = await res.json();
 
         if (json.status === 'success') {
-            cerrarModal();
+            cerrarModalUnirse();
             mostrarNotificacion('ACCESO CONCEDIDO — BIENVENIDO A LA LIGA', 'exito', 3500);
             await cargarLigas();
         } else {
@@ -272,7 +277,7 @@ document.getElementById('btnUnirsePublica').addEventListener('click', async () =
         const json = await res.json();
 
         if (json.status === 'success') {
-            cerrarModal();
+            cerrarModalUnirse();
             mostrarNotificacion('ACCESO CONCEDIDO — BIENVENIDO A LA LIGA', 'exito', 3500);
             await cargarLigas();
         } else {
@@ -289,20 +294,101 @@ document.getElementById('btnUnirsePublica').addEventListener('click', async () =
     }
 });
 
-/* ── Badge de Premium en el dashboard ──────────────────── */
+/* ════════════════════════════════════════════════════════
+   LÓGICA PREMIUM EN EL DASHBOARD
+   ════════════════════════════════════════════════════════ */
+
+/* ── 1. Verificar si el usuario es Premium ─────────────── */
 async function verificarPremiumDashboard() {
     try {
         const res  = await fetch(`api_premium.php?usuario=${encodeURIComponent(USUARIO_ACTUAL)}`);
         const json = await res.json();
         const badge = document.getElementById('premiumHeaderBadge');
         if (!badge) return;
+        
         if (json.status === 'success' && json.es_premium) {
-            badge.innerHTML = '<span class="badge-premium">⚡ PREMIUM</span>';
+            esPremium = true;
+            badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>';
         } else {
-            badge.innerHTML = '<a href="crear_liga.php" class="badge-activar-premium">⚡ Activar Premium</a>';
+            esPremium = false;
+            // Al clickar en este span, abriremos el Modal
+            badge.innerHTML = '<span class="badge-no-premium" id="badgeAbrirPremium" style="margin-left: 10px; cursor:pointer; color:#A63247; font-weight:bold; border: 1px solid #A63247; padding: 2px 6px; border-radius: 4px;">⚡ Activar Premium</span>';
+            document.getElementById('badgeAbrirPremium').addEventListener('click', abrirModalPremium);
         }
     } catch (_) {}
 }
+
+/* ── 2. Funciones del Modal Premium ────────────────────── */
+function abrirModalPremium() {
+    document.getElementById('modalPremium').classList.remove('hidden');
+}
+
+document.getElementById('btnCancelarPremium').addEventListener('click', () => {
+    document.getElementById('modalPremium').classList.add('hidden');
+    document.getElementById('msgPremium').style.display = 'none';
+});
+
+document.getElementById('planSelector').querySelectorAll('.plan-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.plan-btn').forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+        planMeses = parseInt(btn.dataset.meses);
+        document.getElementById('btnComprarPremium').textContent = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+    });
+});
+
+document.getElementById('btnComprarPremium').addEventListener('click', async () => {
+    const btn    = document.getElementById('btnComprarPremium');
+    const msg    = document.getElementById('msgPremium');
+    const metodo = document.getElementById('metodoPago').value;
+
+    btn.disabled      = true;
+    btn.textContent   = 'PROCESANDO PAGO...';
+    msg.style.display = 'none';
+
+    try {
+        const res  = await fetch('api_premium.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accion: 'comprar', nombre_usuario: USUARIO_ACTUAL, metodo_pago: metodo, meses: planMeses })
+        });
+        const json = await res.json();
+
+        if (json.status === 'success') {
+            esPremium = true;
+            const badge = document.getElementById('premiumHeaderBadge');
+            if (badge) badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>';
+
+            msg.style.display    = 'block';
+            msg.style.color      = '#1DF2DD';
+            msg.style.border     = '1px solid #1DF2DD';
+            msg.style.background = 'rgba(29,242,221,0.08)';
+            msg.textContent      = `✓ ¡Premium activo hasta ${new Date(json.premium_hasta).toLocaleDateString('es-ES')}!`;
+
+            setTimeout(() => {
+                document.getElementById('modalPremium').classList.add('hidden');
+                msg.style.display = 'none';
+            }, 2200);
+
+        } else {
+            msg.style.display    = 'block';
+            msg.style.color      = '#ff6b80';
+            msg.style.border     = '1px solid #A63247';
+            msg.style.background = 'rgba(140,8,19,0.15)';
+            msg.textContent      = 'Error: ' + (json.message || 'Inténtalo de nuevo.');
+            btn.disabled         = false;
+            btn.textContent      = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+        }
+    } catch (_) {
+        msg.style.display    = 'block';
+        msg.style.color      = '#ff6b80';
+        msg.style.border     = '1px solid #A63247';
+        msg.style.background = 'rgba(140,8,19,0.15)';
+        msg.textContent      = 'Error de conexión con el servidor.';
+        btn.disabled         = false;
+        btn.textContent      = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+    }
+});
 
 /* ── Inicio ─────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {

@@ -28,9 +28,8 @@ $nombre_usuario_actual = $_SESSION['usuario'];
 </div>
 
 <nav class="nav-tabs">
-    <a href="cliente.php"    class="nav-tab">Dashboard</a>
-    <a href="crear_liga.php" class="nav-tab">Nueva Liga</a>
-    <a href="noticias.php"   class="nav-tab activo">Noticias</a>
+    <a href="cliente.php"  class="nav-tab">Dashboard</a>
+    <a href="noticias.php" class="nav-tab activo">Noticias</a>
 </nav>
 
 <div class="page-header">
@@ -54,7 +53,6 @@ $nombre_usuario_actual = $_SESSION['usuario'];
 
 <div class="news-grid" id="grid"></div>
 
-<!-- Modal de artículo -->
 <div class="overlay" id="overlay">
     <div class="modal-box">
         <button class="m-close" id="mClose">✕</button>
