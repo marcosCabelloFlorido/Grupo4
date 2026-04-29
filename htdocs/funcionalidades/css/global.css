@@ -1,0 +1,164 @@
+/* ═══════════════════════════════════════════════════════════
+   global.css — Estilos compartidos de VALTASY
+   Usado por: cliente.php, crear_liga.php, noticias.php,
+              mercado.php, ver_liga.php
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Reset & base ─────────────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #0d0d0f;
+    color: #e8e8ee;
+    font-family: 'Barlow Condensed', sans-serif;
+    min-height: 100vh;
+    background-image:
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(140, 8, 19, 0.12) 0%, transparent 70%),
+        linear-gradient(rgba(29, 242, 221, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29, 242, 221, 0.02) 1px, transparent 1px);
+    background-size: cover, 60px 60px, 60px 60px;
+}
+
+h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
+
+/* ── Variables de color ───────────────────────────────────── */
+:root {
+    --cyan:      #1DF2DD;
+    --cyan-dark: #168C77;
+    --red-soft:  #A63247;
+    --bg:        #0d0d0f;
+    --bg-card:   #141418;
+    --border:    rgba(29, 242, 221, 0.12);
+    --text:      #e8e8ee;
+    --muted:     #6b6b7a;
+    --purple:    #c084fc;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--red-soft);
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+.header-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: #fff;
+}
+.header-logo span { color: var(--cyan); }
+
+.header-right { text-align: right; }
+.header-right p { font-size: 1rem; color: var(--muted); letter-spacing: 0.05em; }
+.header-right span { color: var(--cyan); font-weight: 700; }
+.header-right a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+}
+.header-right a:hover { color: var(--red-soft); }
+
+/* ── Barra de navegación principal ───────────────────────── */
+.nav-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid rgba(29, 242, 221, 0.12);
+}
+.nav-tab {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 10px 22px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: color 0.2s, background 0.2s;
+    position: relative;
+    top: 1px;
+}
+.nav-tab:hover { color: var(--cyan); }
+.nav-tab.activo {
+    color: var(--cyan);
+    background: var(--bg-card);
+    border-color: rgba(29, 242, 221, 0.25);
+    border-bottom-color: var(--bg-card);
+}
+
+/* ── Notificación flotante ────────────────────────────────── */
+#notificacion {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    display: none;
+    z-index: 1000;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+#notificacion.exito {
+    background: rgba(22, 140, 119, 0.95);
+    color: var(--cyan);
+    border-left: 3px solid var(--cyan);
+}
+#notificacion.error {
+    background: rgba(140, 8, 19, 0.95);
+    color: #ff6b80;
+    border-left: 3px solid var(--red-soft);
+}
+
+/* ── Badge Premium ────────────────────────────────────────── */
+.badge-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, #b45309, #fbbf24);
+    color: #000;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    margin-left: 10px;
+}
+.badge-activar-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 190, 0, 0.35);
+    color: #fbbf24;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    padding: 3px 10px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: background 0.2s;
+}
+.badge-activar-premium:hover { background: rgba(255, 190, 0, 0.1); }
+
+/* ── Modal base compartido ────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.modal-overlay.hidden { display: none; }

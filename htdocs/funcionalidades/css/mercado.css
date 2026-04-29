@@ -1,0 +1,140 @@
+/* ═══════════════════════════════════════════════════════════
+   mercado.css — Estilos exclusivos del Mercado de Fichajes
+   ═══════════════════════════════════════════════════════════ */
+
+body {
+    padding: 40px;
+    background-image: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(29, 242, 221, 0.05) 0%, transparent 70%);
+}
+
+/* ── Header específico del mercado ───────────────────────── */
+.header { border-bottom-color: var(--cyan); margin-bottom: 16px; }
+.header h1 { font-family: 'Orbitron'; font-size: 2rem; color: var(--cyan); }
+.header-info { text-align: right; }
+.fondos { color: var(--cyan); font-size: 1.4rem; font-weight: bold; font-family: 'Orbitron'; }
+.btn-volver {
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    transition: 0.2s;
+    display: inline-block;
+    margin-top: 5px;
+}
+.btn-volver:hover { color: #fff; }
+
+/* ── Alertas ──────────────────────────────────────────────── */
+.alert {
+    padding: 15px;
+    margin-bottom: 25px;
+    font-weight: bold;
+    border-left: 4px solid;
+}
+.alert.exito { background: rgba(29, 242, 221, 0.1); border-color: var(--cyan); color: var(--cyan); }
+.alert.error { background: rgba(140, 8, 19, 0.1); border-color: var(--red-soft); color: #ff6b80; }
+
+/* ── Contador de renovación ───────────────────────────────── */
+.timer-container {
+    text-align: center;
+    background: var(--bg-card);
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 30px;
+}
+.timer-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 5px; }
+.timer-val { font-family: 'Orbitron'; font-size: 1.8rem; color: var(--cyan); }
+
+/* ── Grid de agentes ──────────────────────────────────────── */
+.grid-agentes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+}
+.card-agente {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 25px 20px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.2s;
+    border-top: 4px solid var(--border-color);
+}
+.card-agente:hover { transform: translateY(-5px); }
+.card-agente.pujado {
+    background: rgba(140, 8, 19, 0.05);
+    border-color: rgba(166, 50, 71, 0.3);
+    border-top-color: var(--red-soft);
+}
+
+.tag-pujado {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--red-soft);
+    color: #fff;
+    padding: 4px 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.agente-rol { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.agente-nick { font-family: 'Orbitron'; font-size: 1.4rem; color: #fff; margin: 10px 0 5px; }
+.agente-equipo { font-size: 0.85rem; color: var(--muted); margin-bottom: 15px; }
+.agente-precio-label { font-size: 0.8rem; color: var(--muted); }
+.agente-precio { font-size: 1.5rem; font-weight: bold; color: var(--cyan); font-family: 'Orbitron'; margin-bottom: 20px; }
+
+/* ── Formulario de puja ───────────────────────────────────── */
+.input-puja {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Orbitron';
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 12px;
+    outline: none;
+    transition: 0.2s;
+}
+.input-puja:focus { background: rgba(29, 242, 221, 0.1); }
+
+.btn-comprar {
+    width: 100%;
+    padding: 14px;
+    background: var(--cyan);
+    color: #000;
+    font-weight: bold;
+    font-family: 'Barlow Condensed';
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.btn-comprar:hover { background: var(--cyan-dark); color: #fff; }
+
+.btn-cancelar {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--red-soft);
+    color: var(--red-soft);
+    font-weight: bold;
+    font-family: 'Barlow Condensed';
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-top: 15px;
+    transition: 0.2s;
+}
+.btn-cancelar:hover { background: rgba(140, 8, 19, 0.2); color: #ff6b80; }
+
+.puja-actual-label { font-size: 0.9rem; color: var(--muted); margin-top: 10px; }
+.puja-actual-val { font-family: 'Orbitron'; font-size: 1.3rem; color: var(--red-soft); font-weight: bold; }

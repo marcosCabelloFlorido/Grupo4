@@ -1,0 +1,369 @@
+/* ═══════════════════════════════════════════════════════════
+   ver_liga.css — Estilos exclusivos de Ver Liga
+   ═══════════════════════════════════════════════════════════ */
+
+body {
+    overflow-x: hidden;
+    background-image:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(140, 8, 19, 0.1) 0%, transparent 60%),
+        linear-gradient(rgba(29, 242, 221, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29, 242, 221, 0.02) 1px, transparent 1px);
+    background-size: cover, 60px 60px, 60px 60px;
+}
+
+/* ── Topbar fija ──────────────────────────────────────────── */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 36px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(13, 13, 15, 0.9);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* ── Sub-nav debajo del topbar ────────────────────────────── */
+.nav-sub {
+    display: flex;
+    gap: 4px;
+    padding: 0 36px;
+    border-bottom: 1px solid rgba(29, 242, 221, 0.12);
+    background: rgba(13, 13, 15, 0.9);
+    position: sticky;
+    top: 57px;
+    z-index: 99;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 20px; }
+.btn-back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.topbar-title {
+    font-family: 'Orbitron';
+    font-size: 0.85rem;
+    color: var(--text);
+    letter-spacing: 0.1em;
+}
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+.torneo-label {
+    padding: 9px 12px;
+    background: rgba(29, 242, 221, 0.05);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Barlow Condensed';
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+.select-jornada {
+    padding: 9px 12px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--purple);
+    color: var(--purple);
+    font-family: 'Barlow Condensed';
+    font-weight: 700;
+    text-transform: uppercase;
+    outline: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.select-jornada:hover { background: rgba(192, 132, 252, 0.1); }
+
+.btn-simular {
+    padding: 9px 20px;
+    background: rgba(192, 132, 252, 0.1);
+    border: 1px solid var(--purple);
+    color: var(--purple);
+    font-weight: 900;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: 0.2s;
+}
+.btn-simular:hover { background: var(--purple); color: #000; box-shadow: 0 0 15px rgba(192, 132, 252, 0.4); }
+
+.btn-mercado-top {
+    padding: 9px 20px;
+    background: linear-gradient(135deg, var(--cyan-dark), var(--cyan));
+    color: #000;
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-decoration: none;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+
+/* ── Héroe de la liga ─────────────────────────────────────── */
+.liga-hero { padding: 32px 36px 0; }
+.liga-nombre { font-family: 'Orbitron'; font-size: 1.8rem; font-weight: 900; text-transform: uppercase; }
+
+.liga-codigo-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(29, 242, 221, 0.05);
+    border: 1px dashed var(--cyan);
+    padding: 8px 20px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.liga-codigo-container:hover { background: rgba(29, 242, 221, 0.1); }
+.codigo-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.codigo-val { font-family: 'Orbitron'; font-size: 1.2rem; color: var(--cyan); font-weight: 900; letter-spacing: 2px; }
+
+/* ── Fila de stats rápidos ────────────────────────────────── */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin-top: 28px;
+}
+.stat-box { background: var(--bg-card); padding: 18px 20px; text-align: center; }
+.stat-label { font-size: 0.68rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+.stat-val { font-family: 'Orbitron'; font-size: 1.3rem; color: var(--cyan); }
+
+/* ── Ranking de jornada ───────────────────────────────────── */
+.ranking-jornada-container {
+    display: flex;
+    gap: 15px;
+    padding: 0 36px;
+    overflow-x: auto;
+    margin-top: 20px;
+    padding-bottom: 15px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple) var(--bg-card);
+}
+.card-jornada {
+    min-width: 200px;
+    background: rgba(192, 132, 252, 0.05);
+    border: 1px solid rgba(192, 132, 252, 0.1);
+    padding: 15px;
+    border-left: 3px solid var(--purple);
+    position: relative;
+}
+.card-jornada.top-1 {
+    background: rgba(29, 242, 221, 0.05);
+    border-color: var(--cyan);
+    border-left-color: var(--cyan);
+    box-shadow: inset 0 0 20px rgba(29, 242, 221, 0.05);
+}
+.cj-pos { font-family: 'Orbitron'; font-size: 0.7rem; color: var(--purple); margin-bottom: 5px; display: block; }
+.top-1 .cj-pos { color: var(--cyan); }
+.cj-nombre { font-family: 'Orbitron'; font-size: 0.9rem; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cj-pts { font-family: 'Orbitron'; font-size: 1.4rem; color: #fff; font-weight: 900; }
+.cj-pts span { font-size: 0.7rem; color: var(--muted); margin-left: 5px; }
+
+/* ── Panel de puntos totales ──────────────────────────────── */
+.panel-total {
+    background: linear-gradient(90deg, rgba(166, 50, 71, 0.2), transparent);
+    border-left: 4px solid var(--red-soft);
+    padding: 25px 36px;
+    margin: 25px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 2px;
+}
+.panel-total-titulo { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.panel-total-sub { font-family: 'Orbitron'; font-size: 1.6rem; color: #fff; margin-top: 5px; }
+.panel-total-puntos { font-family: 'Orbitron'; font-size: 2.8rem; color: var(--red-soft); font-weight: 900; }
+
+/* ── Títulos de sección ───────────────────────────────────── */
+.seccion-titulo {
+    padding: 0 36px;
+    font-family: 'Orbitron';
+    font-size: 1.1rem;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    margin-top: 30px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+}
+
+/* ── Grid de jugadores ────────────────────────────────────── */
+.grid-jugadores { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 36px; padding: 0 36px; }
+.card-jugador {
+    flex: 1 1 200px;
+    max-width: 260px;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 18px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+.card-jugador:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); }
+.card-jugador.titular { border-top: 3px solid var(--border-color, var(--cyan)); }
+.card-jugador.reserva { border-top: 3px solid var(--border-color, var(--red-soft)); opacity: 0.85; }
+.card-jugador.reserva:hover { opacity: 1; }
+
+.jugador-rol { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+.jugador-nick { font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 4px; color: #fff; }
+.jugador-equipo-pro { font-size: 0.78rem; color: var(--muted); margin-bottom: 15px; }
+.jugador-puntos-badge {
+    display: inline-block;
+    background: rgba(29, 242, 221, 0.1);
+    border: 1px solid var(--cyan);
+    padding: 5px 10px;
+    color: var(--cyan);
+    font-family: 'Orbitron';
+    font-weight: 900;
+    font-size: 1.1rem;
+    border-radius: 3px;
+    margin-bottom: 15px;
+    width: 100%;
+    text-align: center;
+}
+.jugador-puntos-badge.cero { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); color: var(--muted); }
+
+.btn-accion {
+    width: 100%;
+    padding: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'Barlow Condensed';
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 6px;
+    transition: 0.2s;
+    font-size: 0.85rem;
+}
+.btn-mover { border: 1px solid rgba(29, 242, 221, 0.4); color: var(--cyan); }
+.btn-mover:hover { background: rgba(29, 242, 221, 0.1); }
+.btn-vender { border: 1px solid rgba(255, 255, 255, 0.08); color: var(--muted); }
+.btn-vender:hover { border-color: var(--red-soft); color: var(--red-soft); background: rgba(166, 50, 71, 0.1); }
+
+/* ── Modal de estadísticas del jugador ───────────────────── */
+.stats-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.stats-overlay.active { display: flex; opacity: 1; }
+.stats-panel {
+    background: var(--bg);
+    border: 1px solid var(--cyan);
+    width: 400px;
+    max-width: 90%;
+    position: relative;
+    clip-path: polygon(15px 0%, 100% 0%, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0% 100%, 0% 15px);
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(29, 242, 221, 0.15);
+    transform: scale(0.95);
+    transition: transform 0.2s;
+}
+.stats-overlay.active .stats-panel { transform: scale(1); }
+.sp-close { position: absolute; top: 15px; right: 20px; color: var(--muted); cursor: pointer; font-family: 'Orbitron'; font-size: 1.2rem; transition: 0.2s; }
+.sp-close:hover { color: var(--red-soft); }
+.sp-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; margin-bottom: 20px; }
+.sp-rol { font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+.sp-name { font-family: 'Orbitron'; font-size: 2rem; color: #fff; line-height: 1; }
+.sp-team { font-size: 0.9rem; color: var(--muted); margin-top: 5px; }
+.sp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.sp-data-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px; text-align: center; }
+.sp-data-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.sp-data-val { font-family: 'Orbitron'; font-size: 1.5rem; color: var(--cyan); font-weight: bold; margin-top: 5px; }
+
+/* ── Ranking global de la liga ────────────────────────────── */
+.ranking-container { padding: 0 36px 50px; margin-top: 20px; }
+.rank-row {
+    display: flex;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 12px;
+    padding: 15px 20px;
+    transition: transform 0.2s;
+}
+.rank-row:hover { transform: translateX(5px); border-color: rgba(255, 255, 255, 0.2); }
+.rank-row.is-me { border-left: 4px solid var(--cyan); background: rgba(29, 242, 221, 0.03); }
+.rank-pos { font-family: 'Orbitron'; font-size: 1.6rem; font-weight: 900; width: 50px; color: var(--muted); }
+.rank-pos.gold   { color: #FFD700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+.rank-pos.silver { color: #C0C0C0; }
+.rank-pos.bronze { color: #CD7F32; }
+.rank-info { flex: 1; }
+.rank-equipo { font-family: 'Orbitron'; font-size: 1.1rem; color: #fff; margin-bottom: 2px; }
+.rank-manager { font-size: 0.8rem; color: var(--cyan); letter-spacing: 0.1em; text-transform: uppercase; }
+.rank-roster { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.roster-pill {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.roster-pill span { color: var(--cyan); font-weight: bold; font-family: 'Orbitron'; }
+.rank-pts { font-family: 'Orbitron'; font-size: 1.8rem; color: var(--cyan); font-weight: 900; text-align: right; }
+
+/* ── Modal de simulación ──────────────────────────────────── */
+.modal-sim {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+    padding: 20px;
+}
+.modal-sim.visible { display: flex; }
+.sim-box {
+    background: var(--bg-card);
+    border: 2px solid var(--purple);
+    max-width: 600px;
+    width: 100%;
+    padding: 30px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+.sim-title { font-family: 'Orbitron'; font-size: 1.5rem; color: var(--purple); text-align: center; margin-bottom: 20px; }
+.sim-matchup { display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px; }
+.sim-player {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    border-left: 3px solid var(--purple);
+    margin-bottom: 8px;
+}
+.sim-player-nick { font-family: 'Orbitron'; color: #fff; font-size: 1rem; }
+.sim-player-pts { font-family: 'Orbitron'; font-size: 1.1rem; color: var(--cyan); font-weight: 700; }
+
+/* ── Mensaje de código copiado ────────────────────────────── */
+#copiadoMsg {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--cyan);
+    color: #000;
+    padding: 8px 15px;
+    font-weight: 900;
+    font-family: 'Orbitron';
+    font-size: 0.9rem;
+    z-index: 1000;
+    display: none;
+}
