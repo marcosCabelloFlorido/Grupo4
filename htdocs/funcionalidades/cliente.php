@@ -216,6 +216,35 @@ $nombre_usuario_actual = $_SESSION['usuario'];
         .badge-tipo.privada { background: rgba(140, 8, 19, 0.3); color: #A63247; border: 1px solid #A63247; }
         .badge-tipo.publica { background: rgba(29, 242, 221, 0.1); color: #1DF2DD; border: 1px solid #1DF2DD; }
 
+        /* ── Badge Premium en header ── */
+        .badge-premium {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: linear-gradient(135deg, #b45309, #fbbf24);
+            color: #000;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.6rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            padding: 3px 9px;
+            clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+            margin-left: 10px;
+        }
+        .badge-activar-premium {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,190,0,0.35);
+            color: #fbbf24;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            padding: 3px 10px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-left: 10px;
+            transition: background 0.2s;
+        }
+        .badge-activar-premium:hover { background: rgba(255,190,0,0.1); }
+
         .estado-mensaje {
             grid-column: 1 / -1;
             text-align: center;
@@ -366,7 +395,7 @@ $nombre_usuario_actual = $_SESSION['usuario'];
     <div class="header">
         <h1>VALTASY <span style="font-size:0.45em; color:#6b6b7a; font-family:'Barlow Condensed', sans-serif; font-weight:400; letter-spacing:0.1em;">DASHBOARD</span></h1>
         <div class="header-right">
-            <p>AGENTE: <span><?php echo htmlspecialchars($nombre_usuario_actual); ?></span></p>
+            <p>AGENTE: <span><?php echo htmlspecialchars($nombre_usuario_actual); ?></span><span id="premiumHeaderBadge"></span></p>
             <a href="../sesion/cerrar.php">[ DESCONECTAR ]</a>
         </div>
     </div>
@@ -722,7 +751,24 @@ $nombre_usuario_actual = $_SESSION['usuario'];
         });
 
         // ── Inicio ────────────────────────────────────────────────────────
-        document.addEventListener('DOMContentLoaded', cargarLigas);
+        async function verificarPremiumDashboard() {
+            try {
+                const res  = await fetch(`api_premium.php?usuario=${encodeURIComponent(USUARIO_ACTUAL)}`);
+                const json = await res.json();
+                const badge = document.getElementById('premiumHeaderBadge');
+                if (!badge) return;
+                if (json.status === 'success' && json.es_premium) {
+                    badge.innerHTML = '<span class="badge-premium">⚡ PREMIUM</span>';
+                } else {
+                    badge.innerHTML = '<a href="crear_liga.php" class="badge-activar-premium">⚡ Activar Premium</a>';
+                }
+            } catch (_) {}
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarLigas();
+            verificarPremiumDashboard();
+        });
     </script>
 </body>
 </html>

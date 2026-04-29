@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, DELETE");
@@ -10,6 +11,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/../conexion.php';
+
+/**
+ * Verifica si un usuario (por nombre) tiene Premium activo.
+ * También hace auto-caducidad si la fecha ya pasó.
+ */
+function usuarioEsPremium(PDO $db, string $nombre): bool {
+    $stmt = $db->prepare(
+        "SELECT es_premium, premium_hasta FROM usuarios WHERE nombre = :nombre"
+    );
+    $stmt->execute([':nombre' => $nombre]);
+    $u = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$u) return false;
+
+    if ($u['es_premium'] && $u['premium_hasta'] && strtotime($u['premium_hasta']) < time()) {
+        // Caducó: revocar
+        $db->prepare("UPDATE usuarios SET es_premium = 0 WHERE nombre = :nombre")
+           ->execute([':nombre' => $nombre]);
+        return false;
+    }
+    return (bool)$u['es_premium'];
+}
 
 function unirseALiga($conexion, $id_usuario, $id_liga, $nombre_equipo) {
     $stmtCheck = $conexion->prepare("SELECT id_liga FROM participaciones WHERE id_usuario = :id_u AND id_liga = :id_l");
@@ -91,6 +113,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = $stmtUser->fetch(PDO::FETCH_ASSOC);
             if (!$usuario) throw new Exception("El agente ingresado no existe.");
             $id_usuario_real = $usuario['id_usuario'];
+
+            // ── COMPROBACIÓN PREMIUM EN SERVIDOR ────────────────────────────
+            // Nunca confiar solo en el cliente: verificamos en BD que el usuario
+            // tiene Premium activo antes de permitir crear una liga privada.
+            if (!empty($data->tipo) && $data->tipo === 'Privada') {
+                if (!usuarioEsPremium($conexion, $data->nombre_usuario)) {
+                    if ($conexion->inTransaction()) $conexion->rollBack();
+                    http_response_code(403);
+                    echo json_encode([
+                        "status"           => "error",
+                        "message"          => "Necesitas una suscripción Premium activa para crear ligas privadas.",
+                        "requiere_premium" => true
+                    ]);
+                    exit();
+                }
+            }
+            // ────────────────────────────────────────────────────────────────
 
             $codigo_acceso = null;
             if (!empty($data->tipo) && $data->tipo === 'Privada') {
