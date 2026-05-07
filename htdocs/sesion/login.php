@@ -4,16 +4,17 @@ require __DIR__ . '/../conexion.php';
 $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $usuario = $_POST['usuario'];
+    $usuario = trim($_POST['usuario']);
     $pass    = $_POST['contrasena'];
 
     try {
-        $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE nombre = :u");
+        // Permitir login tanto con nombre de usuario como con el email
+        $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE nombre = :u OR email = :u");
         $stmt->execute([':u' => $usuario]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($pass, $user['contrasena'])) {
-            $_SESSION['usuario'] = $user['nombre'];
+            $_SESSION['usuario'] = $user['nombre']; // Siempre guardamos el nombre en sesión
             $_SESSION['rol']     = $user['rol'];
             // Dashboard está en funcionalidades/
             header("Location: ../funcionalidades/cliente.php");
@@ -22,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mensaje = "<div class='mensaje' style='color:#ff4d4d;'>Credenciales inválidas.</div>";
         }
     } catch (PDOException $e) {
-        $mensaje = "Error: " . $e->getMessage();
+        $mensaje = "<div class='mensaje' style='color:#ff4d4d;'>Error interno: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
 }
 ?>
@@ -39,7 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         h2 { font-family: 'Orbitron', sans-serif; text-transform: uppercase; margin-bottom: 20px; text-align: center; }
         .mensaje { padding: 10px; margin-bottom: 20px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.1); }
         input { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #fff; margin-bottom: 15px; }
-        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #168C77, #1DF2DD); color: #000; border: none; cursor: pointer; font-weight: bold; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); }
+        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #168C77, #1DF2DD); color: #000; border: none; cursor: pointer; font-weight: bold; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); transition: opacity 0.2s; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
         .link { display: block; text-align: center; margin-top: 15px; color: #A63247; text-decoration: none; }
         .link-home { display: block; text-align: center; margin-top: 10px; color: #6b6b7a; text-decoration: none; font-size: 0.85rem; }
     </style>
@@ -48,15 +50,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="card">
         <h2>Login</h2>
         <?php echo $mensaje; ?>
-        <form method="POST" action="login.php">
-            <input type="text"     name="usuario"    placeholder="USUARIO"    required>
+        <form id="formLogin" method="POST" action="login.php">
+            <input type="text"     name="usuario"    placeholder="USUARIO O EMAIL" required>
             <input type="password" name="contrasena" placeholder="CONTRASEÑA" required>
-            <button type="submit">ACCEDER</button>
+            <button type="submit" id="btnLogin">ACCEDER</button>
         </form>
-        <!-- registro está en la misma carpeta sesion/ -->
         <a href="registro.php" class="link">¿No tienes cuenta? Regístrate</a>
-        <!-- Volver a la landing en la raíz -->
         <a href="../index.html" class="link-home">← Volver al inicio</a>
     </div>
+
+    <!-- Previene doble click accidental en el acceso -->
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function() {
+            var btn = document.getElementById('btnLogin');
+            btn.disabled = true;
+            btn.innerHTML = 'VERIFICANDO...';
+        });
+    </script>
 </body>
 </html>

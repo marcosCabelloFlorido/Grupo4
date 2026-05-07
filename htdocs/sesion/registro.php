@@ -124,17 +124,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $mail->AltBody = "Agente $usuario,\n\nTu registro en VALTASY ha sido procesado con éxito.\n\nUsuario: $usuario\nEmail: $email\n\nFin de la transmisión.\n— Agencia VALTASY";
                 $mail->send();
                 $_SESSION['mensaje_registro'] = "<div class='mensaje exito'><span class='msg-icon'>✓</span> ¡Agente <strong>$usuario</strong> registrado con éxito! Revisa tu correo para confirmar el acceso.</div>";
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
+                // Si el correo falla por lo que sea, el registro sigue siendo válido
                 $_SESSION['mensaje_registro'] = "<div class='mensaje exito'><span class='msg-icon'>✓</span> ¡Agente <strong>$usuario</strong> registrado con éxito! (El correo de confirmación no pudo enviarse)</div>";
             }
 
-            // REDIRECCIÓN PARA EVITAR REENVÍO DE FORMULARIO AL RECARGAR
+            // Forzamos el guardado de la sesión antes de redirigir
+            session_write_close();
             header("Location: registro.php");
             exit();
 
         } catch (PDOException $e) {
-            $mensaje = "<div class='mensaje error'><span class='msg-icon'>✕</span> " .
-                ($e->getCode() == 23000 ? "Ese usuario o email ya está registrado en el sistema." : "Error interno del sistema.") . "</div>";
+            // Evaluamos si es un error de duplicidad o un error real de la base de datos
+            if ($e->getCode() == 23000) {
+                $mensaje = "<div class='mensaje error'><span class='msg-icon'>✕</span> Ese usuario o email ya está registrado en el sistema.</div>";
+            } else {
+                $mensaje = "<div class='mensaje error'><span class='msg-icon'>✕</span> Error interno del sistema: " . htmlspecialchars($e->getMessage()) . "</div>";
+            }
         }
     } else {
         $lista = implode('</li><li>', array_map('htmlspecialchars', $errores));
@@ -330,9 +336,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
             transition: box-shadow 0.2s, opacity 0.2s;
         }
+        
+        /* Efecto desactivado cuando procesa */
+        .btn-submit:disabled {
+            background: #3f3f46;
+            color: #a1a1aa;
+            cursor: not-allowed;
+            box-shadow: none !important;
+        }
 
-        .btn-submit:hover { box-shadow: 0 6px 28px rgba(140,8,19,0.5); }
-        .btn-submit:active { opacity: 0.85; }
+        .btn-submit:hover:not(:disabled) { box-shadow: 0 6px 28px rgba(140,8,19,0.5); }
+        .btn-submit:active:not(:disabled) { opacity: 0.85; }
 
         .links {
             margin-top: 24px;
@@ -389,7 +403,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <?php echo $mensaje; ?>
 
-        <form method="POST" action="registro.php" autocomplete="on">
+        <form id="formRegistro" method="POST" action="registro.php" autocomplete="on">
             <div class="field">
                 <label for="usuario">Nombre de Agente</label>
                 <input type="text" id="usuario" name="usuario" placeholder="Mínimo 5 caracteres" required autocomplete="username" value="<?php echo isset($_POST['usuario']) ? htmlspecialchars($_POST['usuario']) : ''; ?>">
@@ -407,7 +421,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required autocomplete="new-password">
                 <p class="field-hint">Mínimo 8 caracteres · una mayúscula · un número · un símbolo</p>
             </div>
-            <button type="submit" class="btn-submit">Activar Acceso</button>
+            <button type="submit" id="btnSubmit" class="btn-submit">Activar Acceso</button>
         </form>
 
         <div class="links">
@@ -416,5 +430,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
+    <!-- Script para evitar doble envío -->
+    <script>
+        document.getElementById('formRegistro').addEventListener('submit', function() {
+            var btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerHTML = 'PROCESANDO ENLACE...';
+        });
+    </script>
 </body>
 </html>

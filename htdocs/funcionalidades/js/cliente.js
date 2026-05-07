@@ -4,13 +4,10 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 let ligaPublicaSeleccionada = null;
-
-// Variables Globales Premium
 let esPremium = false;
 let planMeses  = 1;
 const precios    = { 1: '4,99€', 3: '12,99€', 6: '22,99€', 12: '39,99€' };
 
-/* ── Notificación flotante ──────────────────────────────── */
 function mostrarNotificacion(texto, tipo = 'exito', duracion = 3000) {
     const notif = document.getElementById('notificacion');
     notif.textContent = texto;
@@ -19,28 +16,18 @@ function mostrarNotificacion(texto, tipo = 'exito', duracion = 3000) {
     setTimeout(() => { notif.style.display = 'none'; }, duracion);
 }
 
-/* ── Escapa HTML para evitar XSS ───────────────────────── */
 function escapeHtml(str) {
     if (!str) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-/* ── Renderiza tarjetas de ligas ────────────────────────── */
+/* ── Renderiza tarjetas de ligas ────────────── */
 function renderizarLigas(ligas) {
     const contenedor = document.getElementById('contenedorLigas');
     contenedor.innerHTML = '';
 
     if (!ligas || ligas.length === 0) {
-        contenedor.innerHTML = `
-            <div class="estado-mensaje">
-                SIN OPERACIONES ACTIVAS
-                <span>CREA UNA LIGA O ÚNETE A UNA EXISTENTE</span>
-            </div>`;
+        contenedor.innerHTML = `<div class="estado-mensaje">SIN OPERACIONES ACTIVAS<span>CREA UNA LIGA O ÚNETE A UNA EXISTENTE</span></div>`;
         return;
     }
 
@@ -50,63 +37,53 @@ function renderizarLigas(ligas) {
         const presupuesto = new Intl.NumberFormat('es-ES').format(liga.presupuesto_disponible);
 
         const card = document.createElement('div');
-        card.className       = 'liga-card';
-        card.dataset.idLiga  = liga.id_liga;
+        card.className = 'liga-card';
+        card.dataset.idLiga = liga.id_liga;
 
         card.innerHTML = `
             <a href="ver_liga.php?id_liga=${encodeURIComponent(liga.id_liga)}" class="liga-card-link">
                 <span class="badge-tipo ${tipoBadge}">${tipoLabel}</span>
                 <h3>${escapeHtml(liga.nombre_liga)}</h3>
-                <div class="dato"><span>TORNEO</span><span style="color:#c084fc;">${escapeHtml(liga.torneo || 'VCT EMEA - Fase Regular')}</span></div>
+                <div class="dato"><span>TORNEO</span><span style="color:#c084fc;">${escapeHtml(liga.torneo || 'VCT EMEA')}</span></div>
                 <div class="dato"><span>ESCUADRÓN</span><span>${escapeHtml(liga.nombre_equipo)}</span></div>
-                <div class="dato"><span>PUNTOS</span><span>${liga.puntos_equipo}</span></div>
-                <div class="dato"><span>PRESUPUESTO</span><span>${presupuesto} €</span></div>
-                <div class="dato"><span>PARTICIPANTES</span><span>${liga.total_participantes}</span></div>
+                <div class="dato"><span>PRESUPUESTO</span><span style="color:#4ade80;">${presupuesto} €</span></div>
             </a>
-            <div class="liga-card-footer">
-                <a href="mercado.php?id_liga=${encodeURIComponent(liga.id_liga)}" class="btn-mercado">
-                    🛒 MERCADO
-                </a>
-                <button class="btn-eliminar" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">
-                    ✕ SALIR
-                </button>
+            <div class="liga-card-footer btn-grid-container">
+                <a href="mercado.php?id_liga=${encodeURIComponent(liga.id_liga)}" class="btn-card-action btn-purple">🛒 MERCADO</a>
+                <button class="btn-tienda-card btn-card-action btn-cyan" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">💳 FONDOS</button>
+                <button class="btn-recompensa-card btn-card-action btn-yellow" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">🎁 DIARIA</button>
+                <button class="btn-eliminar btn-card-action btn-red" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">✕ SALIR</button>
             </div>`;
 
         contenedor.appendChild(card);
     });
 
-    contenedor.querySelectorAll('.btn-eliminar').forEach(btn => {
-        btn.addEventListener('click', manejarEliminar);
-    });
+    contenedor.querySelectorAll('.btn-eliminar').forEach(btn => btn.addEventListener('click', manejarEliminar));
+    contenedor.querySelectorAll('.btn-recompensa-card').forEach(btn => btn.addEventListener('click', abrirModalRecompensaLiga));
+    contenedor.querySelectorAll('.btn-tienda-card').forEach(btn => btn.addEventListener('click', abrirModalTienda));
 }
 
-/* ── Carga las ligas del usuario ────────────────────────── */
 async function cargarLigas() {
     const contenedor = document.getElementById('contenedorLigas');
     try {
         const res  = await fetch(`api_ligas.php?usuario=${encodeURIComponent(USUARIO_ACTUAL)}`);
         const json = await res.json();
-
-        if (json.status === 'success') {
-            renderizarLigas(json.data);
-        } else {
-            contenedor.innerHTML = `<div class="estado-mensaje">ERROR AL CARGAR DATOS<span>${escapeHtml(json.message || '')}</span></div>`;
-        }
+        if (json.status === 'success') renderizarLigas(json.data);
+        else contenedor.innerHTML = `<div class="estado-mensaje">ERROR AL CARGAR DATOS<span>${escapeHtml(json.message || '')}</span></div>`;
     } catch (e) {
         contenedor.innerHTML = `<div class="estado-mensaje">ERROR DE CONEXIÓN<span>COMPRUEBA EL SERVIDOR</span></div>`;
     }
 }
 
-/* ── Eliminar / salir de una liga ───────────────────────── */
 async function manejarEliminar(e) {
-    const btn    = e.currentTarget;
+    const btn = e.currentTarget;
     const idLiga = btn.dataset.id;
     const nombre = btn.dataset.nombre;
 
     if (!confirm(`⚠ BAJA DE OPERACIÓN\n\n¿Confirmas la eliminación de la liga "${nombre}"?\n\nEsta acción es irreversible y eliminará todos los datos asociados.`)) return;
 
-    btn.disabled    = true;
-    btn.textContent = 'PROCESANDO...';
+    btn.disabled = true;
+    btn.textContent = '...';
 
     try {
         const res  = await fetch('api_ligas.php', {
@@ -119,8 +96,8 @@ async function manejarEliminar(e) {
         if (json.status === 'success') {
             const card = btn.closest('.liga-card');
             card.style.transition = 'opacity 0.3s, transform 0.3s';
-            card.style.opacity    = '0';
-            card.style.transform  = 'scale(0.95)';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 card.remove();
                 if (!document.querySelectorAll('.liga-card').length) renderizarLigas([]);
@@ -128,34 +105,31 @@ async function manejarEliminar(e) {
             mostrarNotificacion('OPERACIÓN DADA DE BAJA', 'exito');
         } else {
             mostrarNotificacion('ERROR: ' + (json.message || 'Operación fallida'), 'error', 4000);
-            btn.disabled    = false;
-            btn.textContent = '✕ SALIR';
+            btn.disabled = false;
+            btn.innerHTML = '✕ SALIR';
         }
     } catch (err) {
-        mostrarNotificacion('ERROR DE CONEXIÓN CON EL SERVIDOR', 'error', 4000);
-        btn.disabled    = false;
-        btn.textContent = '✕ SALIR';
+        mostrarNotificacion('ERROR DE CONEXIÓN', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '✕ SALIR';
     }
 }
 
 /* ════════════════════════════════════════════════════════
-   MODAL: UNIRSE A LIGA
+   MODAL UNIRSE A LIGA 
    ════════════════════════════════════════════════════════ */
-
-const modal = document.getElementById('modalUnirse');
-
+const modalUnirse = document.getElementById('modalUnirse');
 document.getElementById('btnAbrirModalUnirse').addEventListener('click', () => {
-    modal.classList.remove('hidden');
+    modalUnirse.classList.remove('hidden');
     document.getElementById('inputCodigo').focus();
     cargarLigasPublicasModal();
 });
-
 document.getElementById('btnCerrarModal').addEventListener('click', cerrarModalUnirse);
-modal.addEventListener('click', (e) => { if (e.target === modal) cerrarModalUnirse(); });
+modalUnirse.addEventListener('click', (e) => { if (e.target === modalUnirse) cerrarModalUnirse(); });
 
 function cerrarModalUnirse() {
-    modal.classList.add('hidden');
-    document.getElementById('inputCodigo').value         = '';
+    modalUnirse.classList.add('hidden');
+    document.getElementById('inputCodigo').value = '';
     document.getElementById('nombreEquipoPrivada').value = '';
     document.getElementById('nombreEquipoPublica').value = '';
     document.getElementById('errorPrivada').classList.remove('visible');
@@ -164,7 +138,6 @@ function cerrarModalUnirse() {
     document.getElementById('btnUnirsePublica').disabled = true;
 }
 
-/* ── Tabs del modal ─────────────────────────────────────── */
 document.querySelectorAll('.modal-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('activo'));
@@ -174,30 +147,22 @@ document.querySelectorAll('.modal-tab').forEach(tab => {
     });
 });
 
-/* ── Ligas públicas disponibles ─────────────────────────── */
 async function cargarLigasPublicasModal() {
     const contenedor = document.getElementById('listaLigasPublicas');
     contenedor.innerHTML = '<div class="cargando-ligas">Cargando operaciones disponibles...</div>';
     ligaPublicaSeleccionada = null;
     document.getElementById('btnUnirsePublica').disabled = true;
-
     try {
         const res  = await fetch(`api_ligas.php?publicas=1&usuario=${encodeURIComponent(USUARIO_ACTUAL)}`);
         const json = await res.json();
-
         if (json.status === 'success' && json.data.length > 0) {
             contenedor.innerHTML = '';
             json.data.forEach(liga => {
                 const plazasLibres = liga.max_participantes - liga.participantes_actuales;
                 const item = document.createElement('div');
-                item.className  = 'liga-publica-item';
+                item.className = 'liga-publica-item';
                 item.dataset.id = liga.id_liga;
-                item.innerHTML  = `
-                    <div>
-                        <div class="liga-publica-nombre">${escapeHtml(liga.nombre_liga)}</div>
-                        <div class="liga-publica-meta">${liga.participantes_actuales} / ${liga.max_participantes} agentes</div>
-                    </div>
-                    <div class="liga-publica-plazas">${plazasLibres} plaza${plazasLibres !== 1 ? 's' : ''} libre${plazasLibres !== 1 ? 's' : ''}</div>`;
+                item.innerHTML = `<div><div class="liga-publica-nombre">${escapeHtml(liga.nombre_liga)}</div><div class="liga-publica-meta">${liga.participantes_actuales} / ${liga.max_participantes} agentes</div></div><div class="liga-publica-plazas">${plazasLibres} plaza${plazasLibres !== 1 ? 's' : ''} libre${plazasLibres !== 1 ? 's' : ''}</div>`;
                 item.addEventListener('click', () => {
                     document.querySelectorAll('.liga-publica-item').forEach(i => i.classList.remove('seleccionada'));
                     item.classList.add('seleccionada');
@@ -206,187 +171,231 @@ async function cargarLigasPublicasModal() {
                 });
                 contenedor.appendChild(item);
             });
-        } else {
-            contenedor.innerHTML = '<div class="sin-ligas">No hay operaciones públicas disponibles en este momento.</div>';
-        }
-    } catch (_) {
-        contenedor.innerHTML = '<div class="sin-ligas">Error al cargar las operaciones.</div>';
-    }
+        } else { contenedor.innerHTML = '<div class="sin-ligas">No hay operaciones públicas disponibles.</div>'; }
+    } catch (_) { contenedor.innerHTML = '<div class="sin-ligas">Error al cargar las operaciones.</div>'; }
 }
 
-/* ── Unirse por código privado ──────────────────────────── */
 document.getElementById('btnUnirsePrivada').addEventListener('click', async () => {
-    const codigo       = document.getElementById('inputCodigo').value.trim().toUpperCase();
+    const codigo = document.getElementById('inputCodigo').value.trim().toUpperCase();
     const nombreEquipo = document.getElementById('nombreEquipoPrivada').value.trim();
-    const errorDiv     = document.getElementById('errorPrivada');
-    const btn          = document.getElementById('btnUnirsePrivada');
+    const errorDiv = document.getElementById('errorPrivada');
+    const btn = document.getElementById('btnUnirsePrivada');
 
     errorDiv.classList.remove('visible');
+    if (!codigo) { errorDiv.textContent = 'Introduce código.'; errorDiv.classList.add('visible'); return; }
+    if (!nombreEquipo) { errorDiv.textContent = 'Introduce escuadrón.'; errorDiv.classList.add('visible'); return; }
 
-    if (!codigo)       { errorDiv.textContent = 'Introduce el código de acceso.';       errorDiv.classList.add('visible'); return; }
-    if (!nombreEquipo) { errorDiv.textContent = 'Introduce el nombre de tu escuadrón.'; errorDiv.classList.add('visible'); return; }
-
-    btn.disabled    = true;
-    btn.textContent = 'VERIFICANDO...';
-
+    btn.disabled = true; btn.textContent = 'VERIFICANDO...';
     try {
-        const res  = await fetch('api_ligas.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accion: 'unirse', nombre_usuario: USUARIO_ACTUAL, codigo_acceso: codigo, nombre_equipo: nombreEquipo })
-        });
+        const res = await fetch('api_ligas.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'unirse', nombre_usuario: USUARIO_ACTUAL, codigo_acceso: codigo, nombre_equipo: nombreEquipo }) });
         const json = await res.json();
-
-        if (json.status === 'success') {
-            cerrarModalUnirse();
-            mostrarNotificacion('ACCESO CONCEDIDO — BIENVENIDO A LA LIGA', 'exito', 3500);
-            await cargarLigas();
-        } else {
-            errorDiv.textContent = json.message || 'Error desconocido.';
-            errorDiv.classList.add('visible');
-        }
-    } catch (_) {
-        errorDiv.textContent = 'Error de conexión con el servidor.';
-        errorDiv.classList.add('visible');
-    } finally {
-        btn.disabled    = false;
-        btn.textContent = 'CONFIRMAR ACCESO';
-    }
+        if (json.status === 'success') { cerrarModalUnirse(); mostrarNotificacion('ACCESO CONCEDIDO', 'exito'); await cargarLigas(); }
+        else { errorDiv.textContent = json.message || 'Error desconocido.'; errorDiv.classList.add('visible'); }
+    } catch (_) { errorDiv.textContent = 'Error de conexión.'; errorDiv.classList.add('visible'); } 
+    finally { btn.disabled = false; btn.textContent = 'CONFIRMAR ACCESO'; }
 });
 
-/* ── Unirse a liga pública ──────────────────────────────── */
 document.getElementById('btnUnirsePublica').addEventListener('click', async () => {
     const nombreEquipo = document.getElementById('nombreEquipoPublica').value.trim();
-    const errorDiv     = document.getElementById('errorPublica');
-    const btn          = document.getElementById('btnUnirsePublica');
+    const errorDiv = document.getElementById('errorPublica');
+    const btn = document.getElementById('btnUnirsePublica');
 
     errorDiv.classList.remove('visible');
+    if (!ligaPublicaSeleccionada) return;
+    if (!nombreEquipo) { errorDiv.textContent = 'Introduce escuadrón.'; errorDiv.classList.add('visible'); return; }
 
-    if (!ligaPublicaSeleccionada) { errorDiv.textContent = 'Selecciona una liga de la lista.';       errorDiv.classList.add('visible'); return; }
-    if (!nombreEquipo)            { errorDiv.textContent = 'Introduce el nombre de tu escuadrón.'; errorDiv.classList.add('visible'); return; }
-
-    btn.disabled    = true;
-    btn.textContent = 'PROCESANDO...';
-
+    btn.disabled = true; btn.textContent = 'PROCESANDO...';
     try {
-        const res  = await fetch('api_ligas.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accion: 'unirse', nombre_usuario: USUARIO_ACTUAL, id_liga: ligaPublicaSeleccionada, nombre_equipo: nombreEquipo })
-        });
+        const res = await fetch('api_ligas.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'unirse', nombre_usuario: USUARIO_ACTUAL, id_liga: ligaPublicaSeleccionada, nombre_equipo: nombreEquipo }) });
         const json = await res.json();
-
-        if (json.status === 'success') {
-            cerrarModalUnirse();
-            mostrarNotificacion('ACCESO CONCEDIDO — BIENVENIDO A LA LIGA', 'exito', 3500);
-            await cargarLigas();
-        } else {
-            errorDiv.textContent = json.message || 'Error desconocido.';
-            errorDiv.classList.add('visible');
-            btn.disabled    = false;
-            btn.textContent = 'UNIRSE A LA OPERACIÓN';
-        }
-    } catch (_) {
-        errorDiv.textContent = 'Error de conexión con el servidor.';
-        errorDiv.classList.add('visible');
-        btn.disabled    = false;
-        btn.textContent = 'UNIRSE A LA OPERACIÓN';
-    }
+        if (json.status === 'success') { cerrarModalUnirse(); mostrarNotificacion('ACCESO CONCEDIDO', 'exito'); await cargarLigas(); }
+        else { errorDiv.textContent = json.message || 'Error desconocido.'; errorDiv.classList.add('visible'); btn.disabled = false; btn.textContent = 'UNIRSE A LA OPERACIÓN'; }
+    } catch (_) { errorDiv.textContent = 'Error de conexión.'; errorDiv.classList.add('visible'); btn.disabled = false; btn.textContent = 'UNIRSE A LA OPERACIÓN'; }
 });
 
 /* ════════════════════════════════════════════════════════
-   LÓGICA PREMIUM EN EL DASHBOARD
+   LÓGICA PREMIUM 
    ════════════════════════════════════════════════════════ */
-
-/* ── 1. Verificar si el usuario es Premium ─────────────── */
 async function verificarPremiumDashboard() {
     try {
         const res  = await fetch(`api_premium.php?usuario=${encodeURIComponent(USUARIO_ACTUAL)}`);
         const json = await res.json();
         const badge = document.getElementById('premiumHeaderBadge');
         if (!badge) return;
-        
-        if (json.status === 'success' && json.es_premium) {
-            esPremium = true;
-            badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>';
-        } else {
-            esPremium = false;
-            // Al clickar en este span, abriremos el Modal
-            badge.innerHTML = '<span class="badge-no-premium" id="badgeAbrirPremium" style="margin-left: 10px; cursor:pointer; color:#A63247; font-weight:bold; border: 1px solid #A63247; padding: 2px 6px; border-radius: 4px;">⚡ Activar Premium</span>';
-            document.getElementById('badgeAbrirPremium').addEventListener('click', abrirModalPremium);
-        }
+        if (json.status === 'success' && json.es_premium) { esPremium = true; badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>'; } 
+        else { esPremium = false; badge.innerHTML = '<span class="badge-no-premium" id="badgeAbrirPremium" style="margin-left: 10px; cursor:pointer; color:#A63247; font-weight:bold; border: 1px solid #A63247; padding: 2px 6px; border-radius: 4px;">⚡ Activar Premium</span>'; document.getElementById('badgeAbrirPremium').addEventListener('click', abrirModalPremium); }
     } catch (_) {}
 }
 
-/* ── 2. Funciones del Modal Premium ────────────────────── */
-function abrirModalPremium() {
-    document.getElementById('modalPremium').classList.remove('hidden');
-}
-
-document.getElementById('btnCancelarPremium').addEventListener('click', () => {
-    document.getElementById('modalPremium').classList.add('hidden');
-    document.getElementById('msgPremium').style.display = 'none';
-});
+function abrirModalPremium() { document.getElementById('modalPremium').classList.remove('hidden'); }
+document.getElementById('btnCancelarPremium').addEventListener('click', () => { document.getElementById('modalPremium').classList.add('hidden'); document.getElementById('msgPremium').style.display = 'none'; });
 
 document.getElementById('planSelector').querySelectorAll('.plan-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        document.querySelectorAll('.plan-btn').forEach(b => b.classList.remove('activo'));
-        btn.classList.add('activo');
-        planMeses = parseInt(btn.dataset.meses);
-        document.getElementById('btnComprarPremium').textContent = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+        document.querySelectorAll('.plan-btn').forEach(b => b.classList.remove('activo')); btn.classList.add('activo');
+        planMeses = parseInt(btn.dataset.meses); document.getElementById('btnComprarPremium').textContent = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
     });
 });
 
 document.getElementById('btnComprarPremium').addEventListener('click', async () => {
-    const btn    = document.getElementById('btnComprarPremium');
-    const msg    = document.getElementById('msgPremium');
-    const metodo = document.getElementById('metodoPago').value;
+    const btn = document.getElementById('btnComprarPremium'); const msg = document.getElementById('msgPremium'); const metodo = document.getElementById('metodoPago').value;
+    btn.disabled = true; btn.textContent = 'PROCESANDO PAGO...'; msg.style.display = 'none';
+    try {
+        const res = await fetch('api_premium.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'comprar', nombre_usuario: USUARIO_ACTUAL, metodo_pago: metodo, meses: planMeses }) });
+        const json = await res.json();
+        if (json.status === 'success') {
+            esPremium = true; const badge = document.getElementById('premiumHeaderBadge'); if (badge) badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>';
+            msg.style.display = 'block'; msg.style.color = '#1DF2DD'; msg.style.border = '1px solid #1DF2DD'; msg.style.background = 'rgba(29,242,221,0.08)'; msg.textContent = `✓ ¡Premium activo hasta ${new Date(json.premium_hasta).toLocaleDateString('es-ES')}!`;
+            setTimeout(() => { document.getElementById('modalPremium').classList.add('hidden'); msg.style.display = 'none'; }, 2200);
+        } else {
+            msg.style.display = 'block'; msg.style.color = '#ff6b80'; msg.style.border = '1px solid #A63247'; msg.style.background = 'rgba(140,8,19,0.15)'; msg.textContent = 'Error: ' + (json.message || 'Inténtalo de nuevo.');
+            btn.disabled = false; btn.textContent = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+        }
+    } catch (_) {
+        msg.style.display = 'block'; msg.style.color = '#ff6b80'; msg.style.border = '1px solid #A63247'; msg.style.background = 'rgba(140,8,19,0.15)'; msg.textContent = 'Error de conexión.';
+        btn.disabled = false; btn.textContent = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+    }
+});
 
-    btn.disabled      = true;
-    btn.textContent   = 'PROCESANDO PAGO...';
-    msg.style.display = 'none';
+/* ════════════════════════════════════════════════════════
+   LÓGICA RECOMPENSAS DIARIAS 
+   ════════════════════════════════════════════════════════ */
+let intervaloRecompensa = null;
+let ligaActualRecompensa = null; 
+
+const modalRec = document.getElementById('modalRecompensa');
+document.getElementById('btnCerrarRecompensa').addEventListener('click', cerrarModalRecompensa);
+document.getElementById('btnReclamarRecompensa').addEventListener('click', reclamarRecompensaLiga);
+modalRec.addEventListener('click', (e) => { if (e.target === modalRec) cerrarModalRecompensa(); });
+
+async function abrirModalRecompensaLiga(e) {
+    const btnSource = e.currentTarget;
+    ligaActualRecompensa = btnSource.dataset.id;
+    document.getElementById('nombreLigaRecompensa').textContent = btnSource.dataset.nombre.toUpperCase();
+    modalRec.classList.remove('hidden');
+    
+    const btnReclamar = document.getElementById('btnReclamarRecompensa');
+    btnReclamar.disabled = true; btnReclamar.textContent = 'CONECTANDO...';
 
     try {
-        const res  = await fetch('api_premium.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accion: 'comprar', nombre_usuario: USUARIO_ACTUAL, metodo_pago: metodo, meses: planMeses })
-        });
+        const res = await fetch(`api_recompensas.php?accion=estado&id_liga=${ligaActualRecompensa}`);
+        const json = await res.json();
+        if (json.status === 'success') {
+            document.getElementById('recBase').textContent = new Intl.NumberFormat('es-ES').format(json.recompensa_base) + ' €';
+            document.getElementById('recDiasRacha').textContent = json.racha;
+            document.getElementById('recBonoRacha').textContent = json.bono_racha_pct;
+            
+            // Inyectamos el mensaje del backend
+            document.getElementById('recMensajeProgreso').textContent = json.mensaje_progreso;
+
+            const txtPremium = document.getElementById('recBonoPremium');
+            if (json.bono_premium_pct > 0) { txtPremium.textContent = `+${json.bono_premium_pct}%`; txtPremium.style.color = '#c084fc'; } 
+            else { txtPremium.textContent = '0% (Falta Premium)'; txtPremium.style.color = '#6b6b7a'; }
+            document.getElementById('recTotal').textContent = new Intl.NumberFormat('es-ES').format(json.recompensa_total) + ' €';
+
+            if (json.puede_reclamar) { btnReclamar.disabled = false; btnReclamar.textContent = 'RECLAMAR SUMINISTROS'; if (intervaloRecompensa) clearInterval(intervaloRecompensa); } 
+            else { iniciarTemporizador(json.tiempo_restante, btnReclamar); }
+        } else { btnReclamar.textContent = json.message || 'ERROR'; }
+    } catch (err) { btnReclamar.textContent = 'ERROR DE RED'; }
+}
+
+function cerrarModalRecompensa() { modalRec.classList.add('hidden'); ligaActualRecompensa = null; if (intervaloRecompensa) clearInterval(intervaloRecompensa); }
+
+function iniciarTemporizador(segundosRestantes, boton) {
+    boton.disabled = true;
+    if (intervaloRecompensa) clearInterval(intervaloRecompensa);
+    intervaloRecompensa = setInterval(() => {
+        if (segundosRestantes <= 0) { clearInterval(intervaloRecompensa); boton.disabled = false; boton.textContent = 'RECLAMAR SUMINISTROS'; return; }
+        const h = Math.floor(segundosRestantes / 3600); const m = Math.floor((segundosRestantes % 3600) / 60); const s = segundosRestantes % 60;
+        boton.innerHTML = `ESPERA: <span id="temporizadorRecompensa">${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}</span>`;
+        segundosRestantes--;
+    }, 1000);
+}
+
+async function reclamarRecompensaLiga() {
+    if (!ligaActualRecompensa) return;
+    const btnReclamar = document.getElementById('btnReclamarRecompensa');
+    btnReclamar.disabled = true; btnReclamar.textContent = 'TRANSFIRIENDO FONDOS...';
+
+    const formData = new FormData(); formData.append('accion', 'reclamar'); formData.append('id_liga', ligaActualRecompensa);
+    try {
+        const res = await fetch('api_recompensas.php', { method: 'POST', body: formData });
+        const json = await res.json();
+        if (json.status === 'success') { mostrarNotificacion(json.message, 'exito', 4000); cerrarModalRecompensa(); cargarLigas(); } 
+        else { mostrarNotificacion(json.message || 'Error', 'error', 3000); btnReclamar.textContent = 'REINTENTAR'; btnReclamar.disabled = false; }
+    } catch (e) { mostrarNotificacion('Error de conexión', 'error', 3000); btnReclamar.textContent = 'REINTENTAR'; btnReclamar.disabled = false; }
+}
+
+/* ════════════════════════════════════════════════════════
+   LÓGICA TIENDA DE FONDOS POR LIGA 
+   ════════════════════════════════════════════════════════ */
+let ligaActualTienda = null;
+let packSeleccionado = 'pack2';
+let precioSeleccionado = 4.99;
+
+const modalTienda = document.getElementById('modalTienda');
+document.getElementById('btnCerrarTienda').addEventListener('click', cerrarModalTienda);
+modalTienda.addEventListener('click', (e) => { if (e.target === modalTienda) cerrarModalTienda(); });
+
+document.querySelectorAll('.tienda-pack').forEach(pack => {
+    pack.addEventListener('click', function() {
+        document.querySelectorAll('.tienda-pack').forEach(p => p.classList.remove('activo'));
+        this.classList.add('activo');
+        packSeleccionado = this.dataset.pack;
+        precioSeleccionado = this.dataset.precio;
+        document.getElementById('btnComprarTienda').textContent = `AUTORIZAR TRANSFERENCIA — ${precioSeleccionado} €`;
+    });
+});
+
+function abrirModalTienda(e) {
+    const btnSource = e.currentTarget;
+    ligaActualTienda = btnSource.dataset.id;
+    document.getElementById('nombreLigaTienda').textContent = btnSource.dataset.nombre.toUpperCase();
+    document.getElementById('msgTiendaError').style.display = 'none';
+    modalTienda.classList.remove('hidden');
+}
+
+function cerrarModalTienda() {
+    modalTienda.classList.add('hidden');
+    ligaActualTienda = null;
+    document.getElementById('msgTiendaError').style.display = 'none';
+    const btn = document.getElementById('btnComprarTienda');
+    btn.disabled = false;
+    btn.textContent = `AUTORIZAR TRANSFERENCIA — ${precioSeleccionado} €`;
+}
+
+document.getElementById('btnComprarTienda').addEventListener('click', async () => {
+    if (!ligaActualTienda || !packSeleccionado) return;
+    
+    const btn = document.getElementById('btnComprarTienda');
+    const msgError = document.getElementById('msgTiendaError');
+    btn.disabled = true;
+    btn.textContent = 'PROCESANDO PAGO SEGURO...';
+    msgError.style.display = 'none';
+
+    const formData = new FormData();
+    formData.append('id_liga', ligaActualTienda);
+    formData.append('pack_id', packSeleccionado);
+
+    try {
+        const res = await fetch('api_tienda.php', { method: 'POST', body: formData });
         const json = await res.json();
 
         if (json.status === 'success') {
-            esPremium = true;
-            const badge = document.getElementById('premiumHeaderBadge');
-            if (badge) badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>';
-
-            msg.style.display    = 'block';
-            msg.style.color      = '#1DF2DD';
-            msg.style.border     = '1px solid #1DF2DD';
-            msg.style.background = 'rgba(29,242,221,0.08)';
-            msg.textContent      = `✓ ¡Premium activo hasta ${new Date(json.premium_hasta).toLocaleDateString('es-ES')}!`;
-
-            setTimeout(() => {
-                document.getElementById('modalPremium').classList.add('hidden');
-                msg.style.display = 'none';
-            }, 2200);
-
+            mostrarNotificacion(json.message, 'exito', 4000);
+            cerrarModalTienda();
+            cargarLigas();
         } else {
-            msg.style.display    = 'block';
-            msg.style.color      = '#ff6b80';
-            msg.style.border     = '1px solid #A63247';
-            msg.style.background = 'rgba(140,8,19,0.15)';
-            msg.textContent      = 'Error: ' + (json.message || 'Inténtalo de nuevo.');
-            btn.disabled         = false;
-            btn.textContent      = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+            msgError.textContent = 'Error: ' + (json.message || 'Operación denegada.');
+            msgError.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = `REINTENTAR — ${precioSeleccionado} €`;
         }
-    } catch (_) {
-        msg.style.display    = 'block';
-        msg.style.color      = '#ff6b80';
-        msg.style.border     = '1px solid #A63247';
-        msg.style.background = 'rgba(140,8,19,0.15)';
-        msg.textContent      = 'Error de conexión con el servidor.';
-        btn.disabled         = false;
-        btn.textContent      = `⚡ ACTIVAR PREMIUM — ${precios[planMeses]}`;
+    } catch (e) {
+        msgError.textContent = 'Error de conexión con la pasarela de pagos.';
+        msgError.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = `REINTENTAR — ${precioSeleccionado} €`;
     }
 });
 

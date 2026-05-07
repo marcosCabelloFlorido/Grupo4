@@ -161,14 +161,15 @@ function getColor($rol) {
     <title>Mercado de Fichajes — VALTASY</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/mercado.css">
+    <!-- El ?v=3.0 forzará a tu navegador a recargar el diseño de mercado -->
+    <link rel="stylesheet" href="css/mercado.css?v=3.0">
 </head>
 <body>
 
     <div class="header">
         <h1>MERCADO DE FICHAJES</h1>
         <div class="header-info">
-            <div style="font-size:0.8rem; color:var(--muted); letter-spacing:1px;">FONDOS DISPONIBLES</div>
+            <div class="fondos-label">FONDOS DISPONIBLES</div>
             <div class="fondos"><?php echo number_format($datos_equipo['presupuesto_disponible'] ?? 0, 0, ',', '.'); ?> €</div>
             <a href="ver_liga.php?id_liga=<?php echo $id_liga; ?>" class="btn-volver">← Volver al Escuadrón</a>
         </div>
@@ -196,22 +197,29 @@ function getColor($rol) {
                     <?php if ($j['mi_puja']): ?>
                         <div class="tag-pujado">Oferta Activa</div>
                     <?php endif; ?>
+                    
                     <div class="agente-rol" style="color: <?php echo getColor($j['rol']); ?>">
                         <?php echo getIcon($j['rol']); ?> <?php echo strtoupper($j['rol']); ?>
                     </div>
                     <div class="agente-nick"><?php echo htmlspecialchars($j['nickname']); ?></div>
                     <div class="agente-equipo">🏢 <?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?></div>
-                    <div class="agente-precio-label">Valor Base:</div>
-                    <div class="agente-precio"><?php echo number_format($j['precio_mercado'], 0, ',', '.'); ?> €</div>
+                    
+                    <div class="agente-valor-box">
+                        <span class="agente-precio-label">Valor Base:</span>
+                        <span class="agente-precio"><?php echo number_format($j['precio_mercado'], 0, ',', '.'); ?> €</span>
+                    </div>
+
                     <?php if (!$j['mi_puja']): ?>
-                        <form method="POST">
+                        <form method="POST" class="form-puja">
                             <input type="hidden" name="id_mercado" value="<?php echo $j['id_mercado']; ?>">
                             <input type="number" name="monto_puja" class="input-puja" min="<?php echo $j['precio_mercado']; ?>" value="<?php echo $j['precio_mercado']; ?>" required>
                             <button type="submit" class="btn-comprar">Lanzar Oferta</button>
                         </form>
                     <?php else: ?>
-                        <div class="puja-actual-label">Tu oferta secreta:</div>
-                        <div class="puja-actual-val"><?php echo number_format($j['mi_puja'], 0, ',', '.'); ?> €</div>
+                        <div class="puja-actual-box">
+                            <span class="puja-actual-label">Tu oferta secreta:</span>
+                            <span class="puja-actual-val"><?php echo number_format($j['mi_puja'], 0, ',', '.'); ?> €</span>
+                        </div>
                         <button class="btn-cancelar" onclick="cancelarPuja(<?php echo $j['id_mercado']; ?>)">Retirar Oferta</button>
                     <?php endif; ?>
                 </div>
@@ -219,13 +227,12 @@ function getColor($rol) {
         </div>
 
     <?php else: ?>
-        <div style="text-align:center; padding:50px; background:#141418; border:1px solid rgba(255,255,255,0.1);">
+        <div style="text-align:center; padding:50px; background:#141418; border:1px solid rgba(255,255,255,0.1); border-radius: 8px;">
             <p style="color:var(--muted); font-size:1.2rem;">El mercado se está actualizando. Vuelve en unos instantes.</p>
         </div>
     <?php endif; ?>
 
     <script>
-        // Variables de PHP necesarias para el JS externo
         const ID_EQUIPO = <?php echo $id_equipo; ?>;
         const FECHA_FIN = "<?php echo $fecha_fin_js; ?>";
     </script>
