@@ -177,8 +177,8 @@ function getColor($rol) {
 
     <nav class="nav-tabs">
         <a href="cliente.php"    class="nav-tab">Dashboard</a>
-        <a href="crear_liga.php" class="nav-tab">Nueva Liga</a>
         <a href="noticias.php"   class="nav-tab">Noticias</a>
+        <a href="estadisticas.php?id_liga=<?php echo $id_liga; ?>" class="nav-tab">Estadísticas</a>
     </nav>
 
     <?php if ($mensaje): ?>
@@ -236,6 +236,7 @@ function getColor($rol) {
         const ID_EQUIPO = <?php echo $id_equipo; ?>;
         const FECHA_FIN = "<?php echo $fecha_fin_js; ?>";
     </script>
+    <script src="js/theme-manager.js"></script>
     <script src="js/mercado.js"></script>
 </body>
 </html>

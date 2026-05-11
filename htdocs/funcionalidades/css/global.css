@@ -28,10 +28,171 @@ h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
     --red-soft:  #A63247;
     --bg:        #0d0d0f;
     --bg-card:   #141418;
+    --bg-elevated: #1a1a1f;
     --border:    rgba(29, 242, 221, 0.12);
     --text:      #e8e8ee;
+    --text-secondary: #b4b4be;
     --muted:     #6b6b7a;
     --purple:    #c084fc;
+    --success:   #4ade80;
+    --warning:   #fbbf24;
+    --error:     #f87171;
+}
+
+/* ── Tema Claro (Paleta Premium Mejorada) ─────────────────── */
+[data-theme="light"] {
+    --cyan:      #06b6d4;
+    --cyan-dark: #0891b2;
+    --red-soft:  #ef4444;
+    --bg:        #f5f7fa;        /* Fondo más oscuro, menos blanco */
+    --bg-card:   #ffffff;        /* Blanco puro para tarjetas */
+    --bg-elevated: #f1f5f9;      /* Gris claro para elevación */
+    --border:    rgba(15, 23, 42, 0.08);
+    --text:      #1e293b;        /* Gris azulado oscuro */
+    --text-secondary: #475569;   /* Gris medio */
+    --muted:     #64748b;        /* Gris para muted */
+    --purple:    #8b5cf6;        /* Morado vibrante */
+    --success:   #10b981;        /* Verde esmeralda */
+    --warning:   #f59e0b;        /* Ámbar */
+    --error:     #ef4444;        /* Rojo coral */
+}
+
+[data-theme="light"] body {
+    background: var(--bg);
+    color: var(--text);
+    background-image:
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 70%),
+        linear-gradient(rgba(6, 182, 212, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.02) 1px, transparent 1px);
+}
+
+/* ── Ajustes específicos para tema claro ──────────────────── */
+[data-theme="light"] .card-jugador,
+[data-theme="light"] .card,
+[data-theme="light"] .modal-box,
+[data-theme="light"] .card-agente,
+[data-theme="light"] .liga-card,
+[data-theme="light"] .news-card {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+    border-color: rgba(15, 23, 42, 0.1);
+    background: var(--bg-card);
+}
+
+[data-theme="light"] .card-jugador:hover,
+[data-theme="light"] .card-agente:hover,
+[data-theme="light"] .liga-card:hover,
+[data-theme="light"] .news-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+    border-color: var(--cyan);
+}
+
+[data-theme="light"] .topbar,
+[data-theme="light"] .nav-sub,
+[data-theme="light"] .header {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom-color: rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="light"] .header {
+    padding: 28px 50px;
+    border-bottom: 2px solid var(--red-soft);
+}
+
+[data-theme="light"] .rank-row,
+[data-theme="light"] .card-jornada {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    background: var(--bg-card);
+}
+
+[data-theme="light"] .rank-row:hover,
+[data-theme="light"] .card-jornada:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+/* Inputs y formularios en modo claro */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.2);
+    color: var(--text);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+    outline: none;
+}
+
+/* Botones en modo claro */
+[data-theme="light"] .btn-crear,
+[data-theme="light"] .btn-unirse,
+[data-theme="light"] button[type="submit"] {
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .btn-crear:hover,
+[data-theme="light"] .btn-unirse:hover,
+[data-theme="light"] button[type="submit"]:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    transform: translateY(-1px);
+}
+
+/* Modales en modo claro */
+[data-theme="light"] .modal-overlay {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .stats-overlay {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+}
+
+/* Navegación en modo claro */
+[data-theme="light"] .nav-tab {
+    color: var(--muted);
+}
+
+[data-theme="light"] .nav-tab:hover {
+    color: var(--cyan);
+    background: rgba(6, 182, 212, 0.05);
+}
+
+[data-theme="light"] .nav-tab.activo {
+    color: var(--cyan);
+    background: var(--bg-card);
+    border-color: rgba(6, 182, 212, 0.3);
+}
+
+/* Mejoras visuales generales */
+[data-theme="light"] .header-logo {
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .header-logo span {
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .badge-premium {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="light"] #notificacion.exito {
+    background: rgba(16, 185, 129, 0.95);
+    color: #065f46;
+    border-left-color: var(--success);
+}
+
+[data-theme="light"] #notificacion.error {
+    background: rgba(239, 68, 68, 0.95);
+    color: #991b1b;
+    border-left-color: var(--error);
 }
 
 /* ── Header ───────────────────────────────────────────────── */
@@ -40,14 +201,14 @@ h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid var(--red-soft);
-    padding-bottom: 20px;
+    padding: 24px 40px;
     margin-bottom: 20px;
 }
 .header-logo {
     font-family: 'Orbitron', monospace;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.15em;
     color: #fff;
 }
 .header-logo span { color: var(--cyan); }
@@ -162,3 +323,64 @@ h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
     z-index: 9999;
 }
 .modal-overlay.hidden { display: none; }
+
+/* ── Toggle de tema ───────────────────────────────────────── */
+.theme-toggle {
+    position: relative;
+    width: 56px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle-slider {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #1DF2DD, #168C77);
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(29, 242, 221, 0.4);
+    left: 2px;
+}
+
+.theme-toggle.active .theme-toggle-slider {
+    transform: translateX(28px);
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="light"] .theme-toggle {
+    background: rgba(15, 23, 42, 0.08);
+    border-color: rgba(15, 23, 42, 0.15);
+}
+
+[data-theme="light"] .theme-toggle:hover {
+    background: rgba(15, 23, 42, 0.12);
+    border-color: rgba(15, 23, 42, 0.25);
+}
+
+[data-theme="light"] .theme-toggle-slider {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+}
+
+[data-theme="light"] .theme-toggle.active .theme-toggle-slider {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}

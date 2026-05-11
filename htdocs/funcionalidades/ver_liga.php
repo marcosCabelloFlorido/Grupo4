@@ -137,6 +137,9 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
         <span class="topbar-title"><?php echo htmlspecialchars($liga_info['nombre_liga']); ?></span>
     </div>
     <div class="topbar-right">
+        <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+            <div class="theme-toggle-slider">🌙</div>
+        </div>
         <span class="torneo-label">🏆 <?php echo htmlspecialchars($liga_info['torneo']); ?></span>
         <select id="jornadaSelect" class="select-jornada">
             <option value="1">Jornada 1</option>
@@ -152,8 +155,8 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
 
 <nav class="nav-sub">
     <a href="cliente.php"    class="nav-tab">Dashboard</a>
-    <a href="crear_liga.php" class="nav-tab">Nueva Liga</a>
     <a href="noticias.php"   class="nav-tab">Noticias</a>
+    <a href="estadisticas.php?id_liga=<?php echo $id_liga; ?>" class="nav-tab">Estadísticas</a>
 </nav>
 
 <div class="liga-hero">
@@ -165,80 +168,109 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
     </div>
     <?php endif; ?>
     <div class="stats-row">
-        <div class="stat-box"><div class="stat-label">Mi Escuadrón</div><div class="stat-val" style="color:#fff"><?php echo htmlspecialchars($liga_info['nombre_equipo']); ?></div></div>
+        <div class="stat-box"><div class="stat-label">Mi Escuadrón</div><div class="stat-val" style="color:var(--text)"><?php echo htmlspecialchars($liga_info['nombre_equipo']); ?></div></div>
         <div class="stat-box"><div class="stat-label">Presupuesto</div><div class="stat-val"><?php echo number_format($liga_info['presupuesto_disponible'], 0, ',', '.'); ?> €</div></div>
         <div class="stat-box"><div class="stat-label">Mis Puntos (Jornada <?php echo $jornada_actual; ?>)</div><div class="stat-val" style="color:var(--purple)"><?php echo $puntos_ultima_jornada; ?> PTS</div></div>
     </div>
 </div>
 
-<div class="seccion-titulo" style="color:var(--purple); border-color:rgba(192,132,252,0.2);">Líderes de la Jornada <?php echo $jornada_actual; ?></div>
-<div class="ranking-jornada-container">
-    <?php $posJ = 1; foreach ($clasificacion_jornada as $cj): $claseTop = ($posJ == 1) ? 'top-1' : ''; ?>
-    <div class="card-jornada <?php echo $claseTop; ?>">
-        <span class="cj-pos">RANK #<?php echo $posJ; ?></span>
-        <div class="cj-nombre"><?php echo htmlspecialchars($cj['nombre_equipo']); ?></div>
-        <div class="cj-pts"><?php echo $cj['puntos_jornada_total']; ?> <span>PTS</span></div>
+<!-- Sistema de pestañas -->
+<div class="tabs-container">
+    <div class="tabs-nav">
+        <button class="tab-button active" onclick="switchTab('puntos')">📊 Puntos & Jornada</button>
+        <button class="tab-button" onclick="switchTab('plantilla')">⚡ Mi Plantilla</button>
+        <button class="tab-button" onclick="switchTab('clasificacion')">🏆 Clasificación</button>
     </div>
-    <?php $posJ++; endforeach; ?>
-</div>
 
-<div class="panel-total">
-    <div>
-        <div class="panel-total-titulo">Clasificación General</div>
-        <div class="panel-total-sub">PUNTOS TOTALES DE LA COMPETICIÓN</div>
+    <!-- Tab: Puntos & Jornada -->
+    <div id="tab-puntos" class="tab-content active">
+        <div class="panel-total">
+            <div>
+                <div class="panel-total-titulo">Clasificación General</div>
+                <div class="panel-total-sub">PUNTOS TOTALES DE LA COMPETICIÓN</div>
+            </div>
+            <div class="panel-total-puntos"><?php echo $liga_info['puntos_equipo']; ?> <span style="font-size:1.2rem; color:#6b6b7a;">PTS</span></div>
+        </div>
+
+        <div class="seccion-titulo" style="color:var(--purple); border-color:rgba(192,132,252,0.2);">Líderes de la Jornada <?php echo $jornada_actual; ?></div>
+        <div class="ranking-jornada-container">
+            <?php $posJ = 1; foreach ($clasificacion_jornada as $cj): $claseTop = ($posJ == 1) ? 'top-1' : ''; ?>
+            <div class="card-jornada <?php echo $claseTop; ?>">
+                <span class="cj-pos">RANK #<?php echo $posJ; ?></span>
+                <div class="cj-nombre"><?php echo htmlspecialchars($cj['nombre_equipo']); ?></div>
+                <div class="cj-pts"><?php echo $cj['puntos_jornada_total']; ?> <span>PTS</span></div>
+            </div>
+            <?php $posJ++; endforeach; ?>
+        </div>
     </div>
-    <div class="panel-total-puntos"><?php echo $liga_info['puntos_equipo']; ?> <span style="font-size:1.2rem; color:#6b6b7a;">PTS</span></div>
-</div>
 
-<div class="seccion-titulo">Mis Titulares (<?php echo count($titulares); ?>/5)</div>
-<div class="grid-jugadores">
-    <?php foreach ($titulares as $j): $colorRol = getColor($j['rol']); ?>
-    <div class="card-jugador titular" style="--border-color:<?php echo $colorRol; ?>;" onclick="openPlayerStats('<?php echo htmlspecialchars($j['nickname']); ?>','<?php echo $j['rol']; ?>','<?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?>','<?php echo $colorRol; ?>',<?php echo $j['total_kills']; ?>,<?php echo $j['total_deaths']; ?>,<?php echo $j['total_assists']; ?>,<?php echo $j['total_aces']; ?>,<?php echo $j['total_clutches']; ?>)">
-        <div class="jugador-rol" style="color:<?php echo $colorRol; ?>"><?php echo getIcon($j['rol']); ?> <?php echo strtoupper($j['rol']); ?></div>
-        <div class="jugador-nick"><?php echo htmlspecialchars($j['nickname']); ?></div>
-        <div class="jugador-equipo-pro">🏢 <?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?></div>
-        <div class="jugador-puntos-badge <?php echo ($j['puntos_jornada'] == 0) ? 'cero' : ''; ?>"><?php echo $j['puntos_jornada']; ?> PTS</div>
-        <button class="btn-accion btn-mover" style="color:var(--red-soft);border-color:rgba(166,50,71,0.4);" onclick="event.stopPropagation(); cambiarEstado(<?php echo $j['id_jugador']; ?>,0,<?php echo count($titulares); ?>)">↓ Mover a Reservas</button>
-        <button class="btn-accion btn-vender" onclick="event.stopPropagation(); venderJugador(<?php echo $j['id_jugador']; ?>,'<?php echo htmlspecialchars($j['nickname'], ENT_QUOTES); ?>')">Vender (-20%)</button>
-    </div>
-    <?php endforeach; ?>
-</div>
-
-<div class="seccion-titulo" style="color:var(--red-soft); border-color:rgba(166,50,71,0.2);">Banquillo (Reservas)</div>
-<div class="grid-jugadores">
-    <?php if (empty($reservas)): ?><p style="color:var(--muted); font-size:0.9rem; margin-left:5px;">Tu banquillo está vacío.</p><?php endif; ?>
-    <?php foreach ($reservas as $j): $colorRol = getColor($j['rol']); ?>
-    <div class="card-jugador reserva" style="--border-color:var(--red-soft);" onclick="openPlayerStats('<?php echo htmlspecialchars($j['nickname']); ?>','<?php echo $j['rol']; ?>','<?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?>','<?php echo $colorRol; ?>',<?php echo $j['total_kills']; ?>,<?php echo $j['total_deaths']; ?>,<?php echo $j['total_assists']; ?>,<?php echo $j['total_aces']; ?>,<?php echo $j['total_clutches']; ?>)">
-        <div class="jugador-rol" style="color:<?php echo $colorRol; ?>"><?php echo getIcon($j['rol']); ?> <?php echo strtoupper($j['rol']); ?></div>
-        <div class="jugador-nick"><?php echo htmlspecialchars($j['nickname']); ?></div>
-        <div class="jugador-equipo-pro">🏢 <?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?></div>
-        <div class="jugador-puntos-badge cero">BANQUILLO</div>
-        <button class="btn-accion btn-mover" onclick="event.stopPropagation(); cambiarEstado(<?php echo $j['id_jugador']; ?>,1,<?php echo count($titulares); ?>)">↑ Subir a Titular</button>
-        <button class="btn-accion btn-vender" onclick="event.stopPropagation(); venderJugador(<?php echo $j['id_jugador']; ?>,'<?php echo htmlspecialchars($j['nickname'], ENT_QUOTES); ?>')">Vender (-20%)</button>
-    </div>
-    <?php endforeach; ?>
-</div>
-
-<div class="seccion-titulo" style="color:#FFD700; border-color:rgba(255,215,0,0.2); margin-top:50px;">Clasificación Global de la Liga</div>
-<div class="ranking-container">
-    <?php $posicion = 1; foreach ($clasificacion_global as $c):
-        $clase_pos = ($posicion == 1) ? 'gold' : (($posicion == 2) ? 'silver' : (($posicion == 3) ? 'bronze' : ''));
-        $is_me     = ($c['id_equipo_fantasy'] == $id_equipo_fantasy) ? 'is-me' : '';
-    ?>
-    <div class="rank-row <?php echo $is_me; ?>">
-        <div class="rank-pos <?php echo $clase_pos; ?>">#<?php echo $posicion; ?></div>
-        <div class="rank-info">
-            <div class="rank-equipo"><?php echo htmlspecialchars($c['nombre_equipo']); ?> <?php if ($is_me) echo '<span style="font-size:0.7rem;background:var(--cyan);color:#000;padding:2px 5px;border-radius:3px;vertical-align:middle;margin-left:5px;">TÚ</span>'; ?></div>
-            <div class="rank-manager">Mánager: <?php echo htmlspecialchars($c['manager']); ?></div>
-            <div class="rank-roster">
-                <?php if (isset($rosters[$c['id_equipo_fantasy']])) {
-                    foreach ($rosters[$c['id_equipo_fantasy']] as $rj) { echo "<div class='roster-pill'>" . getIcon($rj['rol']) . " " . htmlspecialchars($rj['nickname']) . " <span style='color:#1DF2DD'>" . $rj['puntos_jornada'] . " pts</span></div>"; }
-                } else echo "<div class='roster-pill' style='color:gray'>Sin jugadores titulares</div>"; ?>
+    <!-- Tab: Mi Plantilla -->
+    <div id="tab-plantilla" class="tab-content">
+        <div class="seccion-titulo">Mis Titulares (<?php echo count($titulares); ?>/5)</div>
+        <div class="grid-jugadores-wrapper">
+            <div class="grid-jugadores">
+                <?php foreach ($titulares as $j): $colorRol = getColor($j['rol']); ?>
+                <div class="card-jugador titular" style="--border-color:<?php echo $colorRol; ?>;" onclick="openPlayerStats('<?php echo htmlspecialchars($j['nickname']); ?>','<?php echo $j['rol']; ?>','<?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?>','<?php echo $colorRol; ?>',<?php echo $j['total_kills']; ?>,<?php echo $j['total_deaths']; ?>,<?php echo $j['total_assists']; ?>,<?php echo $j['total_aces']; ?>,<?php echo $j['total_clutches']; ?>)">
+                    <div class="jugador-rol" style="color:<?php echo $colorRol; ?>"><?php echo getIcon($j['rol']); ?> <?php echo strtoupper($j['rol']); ?></div>
+                    <div class="jugador-nick"><?php echo htmlspecialchars($j['nickname']); ?></div>
+                    <div class="jugador-equipo-pro">🏢 <?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?></div>
+                    <div class="jugador-puntos-badge <?php echo ($j['puntos_jornada'] == 0) ? 'cero' : ''; ?>"><?php echo $j['puntos_jornada']; ?> PTS</div>
+                    <button class="btn-accion btn-mover" style="color:var(--red-soft);border-color:rgba(166,50,71,0.4);" onclick="event.stopPropagation(); cambiarEstado(<?php echo $j['id_jugador']; ?>,0,<?php echo count($titulares); ?>)">↓ Mover a Reservas</button>
+                    <button class="btn-accion btn-vender" onclick="event.stopPropagation(); venderJugador(<?php echo $j['id_jugador']; ?>,'<?php echo htmlspecialchars($j['nickname'], ENT_QUOTES); ?>')">Vender (-20%)</button>
+                </div>
+                <?php endforeach; ?>
             </div>
         </div>
-        <div class="rank-pts"><?php echo $c['puntos_equipo']; ?></div>
+
+        <div class="seccion-titulo" style="color:var(--red-soft); border-color:rgba(166,50,71,0.2);">Banquillo (Reservas)</div>
+        <div class="grid-jugadores-wrapper">
+            <div class="grid-jugadores">
+                <?php if (empty($reservas)): ?><p style="color:var(--muted); font-size:0.9rem; margin-left:5px;">Tu banquillo está vacío.</p><?php endif; ?>
+                <?php foreach ($reservas as $j): $colorRol = getColor($j['rol']); ?>
+                <div class="card-jugador reserva" style="--border-color:var(--red-soft);" onclick="openPlayerStats('<?php echo htmlspecialchars($j['nickname']); ?>','<?php echo $j['rol']; ?>','<?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?>','<?php echo $colorRol; ?>',<?php echo $j['total_kills']; ?>,<?php echo $j['total_deaths']; ?>,<?php echo $j['total_assists']; ?>,<?php echo $j['total_aces']; ?>,<?php echo $j['total_clutches']; ?>)">
+                    <div class="jugador-rol" style="color:<?php echo $colorRol; ?>"><?php echo getIcon($j['rol']); ?> <?php echo strtoupper($j['rol']); ?></div>
+                    <div class="jugador-nick"><?php echo htmlspecialchars($j['nickname']); ?></div>
+                    <div class="jugador-equipo-pro">🏢 <?php echo htmlspecialchars($j['nombre_equipo_profesional'] ?? 'Libre'); ?></div>
+                    <div class="jugador-puntos-badge cero">BANQUILLO</div>
+                    <button class="btn-accion btn-mover" onclick="event.stopPropagation(); cambiarEstado(<?php echo $j['id_jugador']; ?>,1,<?php echo count($titulares); ?>)">↑ Subir a Titular</button>
+                    <button class="btn-accion btn-vender" onclick="event.stopPropagation(); venderJugador(<?php echo $j['id_jugador']; ?>,'<?php echo htmlspecialchars($j['nickname'], ENT_QUOTES); ?>')">Vender (-20%)</button>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
     </div>
-    <?php $posicion++; endforeach; ?>
+
+    <!-- Tab: Clasificación -->
+    <div id="tab-clasificacion" class="tab-content">
+        <div class="clasificacion-section">
+            <div class="clasificacion-header">
+                <div>
+                    <div class="clasificacion-title">🏆 Clasificación Global</div>
+                    <div class="clasificacion-subtitle">Ranking completo de la liga</div>
+                </div>
+            </div>
+            <div class="ranking-container">
+                <?php $posicion = 1; foreach ($clasificacion_global as $c):
+                    $clase_pos = ($posicion == 1) ? 'gold' : (($posicion == 2) ? 'silver' : (($posicion == 3) ? 'bronze' : ''));
+                    $is_me     = ($c['id_equipo_fantasy'] == $id_equipo_fantasy) ? 'is-me' : '';
+                ?>
+                <div class="rank-row <?php echo $is_me; ?>">
+                    <div class="rank-pos <?php echo $clase_pos; ?>">#<?php echo $posicion; ?></div>
+                    <div class="rank-info">
+                        <div class="rank-equipo"><?php echo htmlspecialchars($c['nombre_equipo']); ?> <?php if ($is_me) echo '<span style="font-size:0.7rem;background:var(--cyan);color:#000;padding:2px 5px;border-radius:3px;vertical-align:middle;margin-left:5px;">TÚ</span>'; ?></div>
+                        <div class="rank-manager">Mánager: <?php echo htmlspecialchars($c['manager']); ?></div>
+                        <div class="rank-roster">
+                            <?php if (isset($rosters[$c['id_equipo_fantasy']])) {
+                                foreach ($rosters[$c['id_equipo_fantasy']] as $rj) { echo "<div class='roster-pill'>" . getIcon($rj['rol']) . " " . htmlspecialchars($rj['nickname']) . " <span style='color:#1DF2DD'>" . $rj['puntos_jornada'] . " pts</span></div>"; }
+                            } else echo "<div class='roster-pill' style='color:gray'>Sin jugadores titulares</div>"; ?>
+                        </div>
+                    </div>
+                    <div class="rank-pts"><?php echo $c['puntos_equipo']; ?></div>
+                </div>
+                <?php $posicion++; endforeach; ?>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal de simulación -->
@@ -258,6 +290,7 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
     const ID_EQUIPO_FANTASY = <?php echo $id_equipo_fantasy; ?>;
     const TORNEO_LIGA       = "<?php echo addslashes($liga_info['torneo'] ?? 'VCT EMEA - Fase Regular'); ?>";
 </script>
+<script src="js/theme-manager.js"></script>
 <script src="js/ver_liga.js"></script>
 
 <?php endif; ?>

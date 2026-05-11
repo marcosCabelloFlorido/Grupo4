@@ -30,6 +30,7 @@ $nombre_usuario_actual = $_SESSION['usuario'];
 <nav class="nav-tabs">
     <a href="cliente.php"  class="nav-tab">Dashboard</a>
     <a href="noticias.php" class="nav-tab activo">Noticias</a>
+    <a href="estadisticas.php" class="nav-tab">Estadísticas</a>
 </nav>
 
 <div class="page-header">
@@ -68,6 +69,7 @@ $nombre_usuario_actual = $_SESSION['usuario'];
 <script>
     const USUARIO = <?= json_encode($nombre_usuario_actual) ?>;
 </script>
+<script src="js/theme-manager.js"></script>
 <script src="js/noticias.js"></script>
 </body>
 </html>

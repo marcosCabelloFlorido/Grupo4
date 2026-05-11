@@ -2,7 +2,7 @@
    noticias.css — Estilos exclusivos de la página de Noticias
    ═══════════════════════════════════════════════════════════ */
 
-body { padding: 40px; }
+body { padding: 40px 50px; }
 
 /* ── Cabecera de página ───────────────────────────────────── */
 .page-header {
@@ -326,4 +326,109 @@ body { padding: 40px; }
     .news-card.featured { flex-direction: column; border-left: none; border-top: 2px solid var(--cyan); }
     .news-card.featured .card-icon { width: 100%; min-width: unset; height: 150px; }
     .page-header { flex-direction: column; align-items: flex-start; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODO CLARO - Noticias
+   ═══════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .header-logo {
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .header-logo span {
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .page-header {
+    background: var(--bg-card);
+    border-bottom-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="light"] .filter-btn {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .filter-btn:hover {
+    background: rgba(6, 182, 212, 0.08);
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+[data-theme="light"] .filter-btn.activo {
+    background: var(--cyan);
+    color: white;
+    border-color: var(--cyan);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+}
+
+[data-theme="light"] .btn-refresh {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="light"] .btn-refresh:hover {
+    background: rgba(6, 182, 212, 0.08);
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+[data-theme="light"] .news-card {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .news-card:hover {
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
+    border-color: var(--cyan);
+    transform: translateY(-2px);
+}
+
+[data-theme="light"] .news-cat {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--cyan);
+}
+
+[data-theme="light"] .news-cat.vct {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--purple);
+}
+
+[data-theme="light"] .news-cat.patch {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning);
+}
+
+[data-theme="light"] .news-cat.esports {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .modal-box {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.15);
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 10px 10px -5px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .m-close {
+    color: var(--muted);
+}
+
+[data-theme="light"] .m-close:hover {
+    color: var(--red-soft);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+[data-theme="light"] .live-indicator {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--success);
+}
+
+[data-theme="light"] .live-dot {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
 }

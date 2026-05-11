@@ -32,6 +32,7 @@ $nombre_usuario_actual = $_SESSION['usuario'];
     <nav class="nav-tabs">
         <a href="cliente.php"  class="nav-tab">Dashboard</a>
         <a href="noticias.php" class="nav-tab">Noticias</a>
+        <a href="estadisticas.php" class="nav-tab">Estadísticas</a>
     </nav>
 
     <div class="card">
@@ -127,6 +128,7 @@ $nombre_usuario_actual = $_SESSION['usuario'];
     <script>
         const USUARIO = "<?php echo htmlspecialchars($nombre_usuario_actual, ENT_QUOTES); ?>";
     </script>
+    <script src="js/theme-manager.js"></script>
     <script src="js/crear_liga.js"></script>
 </body>
 </html>

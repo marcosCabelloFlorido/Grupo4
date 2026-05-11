@@ -3,6 +3,32 @@
    Requiere: ID_EQUIPO_FANTASY y TORNEO_LIGA definidos inline en el PHP
    ═══════════════════════════════════════════════════════════ */
 
+/* ── Sistema de pestañas ────────────────────────────────── */
+function switchTab(tabName) {
+    // Ocultar todos los contenidos
+    const allContents = document.querySelectorAll('.tab-content');
+    allContents.forEach(content => content.classList.remove('active'));
+    
+    // Desactivar todos los botones
+    const allButtons = document.querySelectorAll('.tab-button');
+    allButtons.forEach(button => button.classList.remove('active'));
+    
+    // Activar el tab seleccionado
+    const selectedContent = document.getElementById('tab-' + tabName);
+    if (selectedContent) {
+        selectedContent.classList.add('active');
+    }
+    
+    // Activar el botón correspondiente
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => {
+        if (button.textContent.toLowerCase().includes(tabName === 'puntos' ? 'puntos' : 
+            tabName === 'plantilla' ? 'plantilla' : 'clasificación')) {
+            button.classList.add('active');
+        }
+    });
+}
+
 /* ── Modal de estadísticas del jugador ──────────────────── */
 function openPlayerStats(nick, rol, equipo, color, kills, deaths, assists, aces, clutches) {
     document.getElementById('spName').textContent  = nick;
@@ -37,6 +63,10 @@ async function copiarCodigo(codigo) {
 /* ── Cambiar titular / reserva ──────────────────────────── */
 async function cambiarEstado(id, est, num) {
     if (est === 1 && num >= 5) { alert('Equipo titular lleno (5/5).'); return; }
+    
+    // Guardar la pestaña activa antes de recargar
+    sessionStorage.setItem('activeTab', 'plantilla');
+    
     try {
         const res  = await fetch('api_plantilla.php', {
             method:  'POST',
@@ -52,6 +82,10 @@ async function cambiarEstado(id, est, num) {
 /* ── Vender jugador ─────────────────────────────────────── */
 async function venderJugador(id, nom) {
     if (!confirm(`¿Vender a ${nom}? Recuperarás 80% del valor.`)) return;
+    
+    // Guardar la pestaña activa antes de recargar
+    sessionStorage.setItem('activeTab', 'plantilla');
+    
     try {
         const res  = await fetch('api_venta.php', {
             method:  'POST',
@@ -63,6 +97,15 @@ async function venderJugador(id, nom) {
         else alert('Error: ' + json.message);
     } catch (_) { alert('Error de conexión.'); }
 }
+
+/* ── Restaurar pestaña activa al cargar ─────────────────── */
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTab = sessionStorage.getItem('activeTab');
+    if (savedTab) {
+        switchTab(savedTab);
+        sessionStorage.removeItem('activeTab');
+    }
+});
 
 /* ── Simular partido ────────────────────────────────────── */
 async function simularPartido() {

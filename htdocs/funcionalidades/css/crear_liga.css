@@ -2,7 +2,7 @@
    crear_liga.css — Estilos exclusivos de Crear Liga
    ═══════════════════════════════════════════════════════════ */
 
-body { padding: 40px; }
+body { padding: 40px 50px; }
 
 /* ── Formulario principal ─────────────────────────────────── */
 .card {
@@ -280,4 +280,132 @@ select option:disabled { color: #444; }
     text-align: center;
     font-size: 0.9rem;
     font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODO CLARO - Crear Liga
+   ═══════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .card {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .card h2 {
+    color: var(--text);
+}
+
+[data-theme="light"] .card label {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .card input,
+[data-theme="light"] .card select {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+    color: var(--text);
+}
+
+[data-theme="light"] .card input:focus,
+[data-theme="light"] .card select:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+[data-theme="light"] .card button[type="submit"] {
+    box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .card button[type="submit"]:hover {
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .premium-lock-notice {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .link-premium {
+    color: var(--warning);
+}
+
+[data-theme="light"] .link-premium:hover {
+    color: var(--warning);
+    text-decoration: underline;
+}
+
+[data-theme="light"] .modal-premium-box {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.15);
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 10px 10px -5px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .premium-header {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1));
+    border-bottom-color: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .premium-perks li {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .plan-btn {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="light"] .plan-btn:hover {
+    background: rgba(6, 182, 212, 0.08);
+    border-color: var(--cyan);
+}
+
+[data-theme="light"] .plan-btn.activo {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: var(--cyan);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .metodo-pago select {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="light"] .btn-comprar {
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .btn-comprar:hover {
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .btn-cancelar-premium {
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="light"] .btn-cancelar-premium:hover {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.3);
+}
+
+[data-theme="light"] .codigo-display {
+    background: var(--bg-elevated);
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] #mensaje.exito {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--success);
+    color: #065f46;
+}
+
+[data-theme="light"] #mensaje.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--error);
+    color: #991b1b;
 }
