@@ -1,0 +1,411 @@
+/* ═══════════════════════════════════════════════════════════
+   crear_liga.css — Estilos exclusivos de Crear Liga
+   ═══════════════════════════════════════════════════════════ */
+
+body { padding: 40px 50px; }
+
+/* ── Formulario principal ─────────────────────────────────── */
+.card {
+    background: var(--bg-card);
+    border: 1px solid rgba(29, 242, 221, 0.12);
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    margin-bottom: 20px;
+    font-family: 'Barlow Condensed';
+    font-size: 1rem;
+}
+input[type="text"]:focus,
+select:focus { outline: none; border-color: rgba(29, 242, 221, 0.4); }
+
+label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #8C0813, var(--red-soft));
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    font-family: 'Barlow Condensed';
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    transition: box-shadow 0.2s;
+}
+button[type="submit"]:hover { box-shadow: 0 6px 24px rgba(140, 8, 19, 0.5); }
+
+#mensaje {
+    margin-top: 20px;
+    padding: 15px;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+}
+.exito { color: var(--cyan); border: 1px solid var(--cyan); background: rgba(29, 242, 221, 0.1); }
+.error { color: var(--red-soft); border: 1px solid var(--red-soft); background: rgba(140, 8, 19, 0.2); }
+
+select option:disabled { color: #444; }
+
+/* ── Aviso de bloqueo premium en tipo de liga ─────────────── */
+.tipo-option-wrapper { position: relative; }
+.premium-lock-notice {
+    display: none;
+    margin-top: -12px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: rgba(255, 190, 0, 0.07);
+    border: 1px solid rgba(255, 190, 0, 0.3);
+    color: #fbbf24;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+}
+.premium-lock-notice strong { color: #fde68a; }
+.premium-lock-notice .link-premium {
+    color: #fbbf24;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* ── Badge Premium (header) ───────────────────────────────── */
+.badge-no-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 190, 0, 0.3);
+    color: #fbbf24;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.badge-no-premium:hover { background: rgba(255, 190, 0, 0.12); }
+
+/* ── Badge Premium en header (sobreescribe tamaño global) ─── */
+.badge-premium {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+}
+
+/* ── Modal: código de liga privada ────────────────────────── */
+.modal-box {
+    background: var(--bg-card);
+    border: 2px solid var(--cyan);
+    padding: 40px;
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+}
+.modal-box h2 {
+    font-family: 'Orbitron';
+    color: var(--cyan);
+    margin-bottom: 10px;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+}
+.modal-box p { color: var(--muted); margin-bottom: 20px; font-size: 0.95rem; }
+
+.codigo-display {
+    font-family: 'Orbitron';
+    font-size: 2rem;
+    letter-spacing: 0.3em;
+    color: #fff;
+    background: rgba(29, 242, 221, 0.08);
+    border: 2px dashed var(--cyan);
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    user-select: all;
+    transition: background 0.2s;
+}
+.codigo-display:hover { background: rgba(29, 242, 221, 0.15); }
+
+.aviso-codigo { font-size: 0.8rem; color: var(--red-soft); margin-bottom: 20px; letter-spacing: 0.05em; }
+
+.btn-modal {
+    display: inline-block;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, var(--cyan-dark), var(--cyan));
+    color: #000;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    font-family: 'Barlow Condensed';
+    font-size: 1rem;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.copiado-msg { font-size: 0.8rem; color: var(--cyan); min-height: 1.2em; margin-bottom: 8px; }
+
+/* ── Modal: comprar Premium ───────────────────────────────── */
+.modal-premium-box {
+    background: var(--bg-card);
+    border: 2px solid #fbbf24;
+    padding: 0;
+    max-width: 480px;
+    width: 92%;
+    overflow: hidden;
+}
+.premium-header {
+    background: linear-gradient(135deg, #78350f, #b45309);
+    padding: 28px 32px 20px;
+    text-align: center;
+}
+.premium-header h2 {
+    font-family: 'Orbitron';
+    font-size: 1.1rem;
+    color: #fde68a;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+}
+.premium-header p { color: #fcd34d; font-size: 0.9rem; }
+.premium-body { padding: 28px 32px; }
+
+.premium-perks { list-style: none; margin-bottom: 24px; }
+.premium-perks li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.premium-perks li:last-child { border-bottom: none; }
+.premium-perks .icon { color: #fbbf24; font-size: 1rem; }
+.premium-perks .perk-bloqueado { color: var(--muted); text-decoration: line-through; }
+
+.plan-selector {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+}
+.plan-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 190, 0, 0.2);
+    color: var(--text);
+    padding: 10px 4px;
+    cursor: pointer;
+    font-family: 'Barlow Condensed';
+    font-size: 0.82rem;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+}
+.plan-btn:hover,
+.plan-btn.activo { border-color: #fbbf24; background: rgba(255, 190, 0, 0.08); color: #fde68a; }
+.plan-btn .plan-precio {
+    font-family: 'Orbitron';
+    font-size: 0.95rem;
+    color: #fbbf24;
+    display: block;
+    margin-top: 4px;
+}
+.plan-btn .plan-ahorro { font-size: 0.7rem; color: #86efac; display: block; margin-top: 2px; }
+
+.metodo-pago { margin-bottom: 20px; }
+.metodo-pago label { margin-bottom: 6px; }
+.metodo-pago select { margin-bottom: 0; }
+
+.btn-comprar {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #b45309, #fbbf24);
+    color: #000;
+    font-weight: 900;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    font-family: 'Orbitron';
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    transition: box-shadow 0.2s;
+}
+.btn-comprar:hover { box-shadow: 0 6px 24px rgba(251, 191, 36, 0.4); }
+.btn-comprar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-cancelar-premium {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Barlow Condensed';
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+.btn-cancelar-premium:hover { border-color: rgba(255, 255, 255, 0.2); color: var(--text); }
+
+.premium-aviso {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+}
+
+#msgPremium {
+    margin-top: 12px;
+    padding: 10px;
+    display: none;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODO CLARO - Crear Liga
+   ═══════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .card {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .card h2 {
+    color: var(--text);
+}
+
+[data-theme="light"] .card label {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .card input,
+[data-theme="light"] .card select {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+    color: var(--text);
+}
+
+[data-theme="light"] .card input:focus,
+[data-theme="light"] .card select:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+[data-theme="light"] .card button[type="submit"] {
+    box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .card button[type="submit"]:hover {
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .premium-lock-notice {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .link-premium {
+    color: var(--warning);
+}
+
+[data-theme="light"] .link-premium:hover {
+    color: var(--warning);
+    text-decoration: underline;
+}
+
+[data-theme="light"] .modal-premium-box {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.15);
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 10px 10px -5px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .premium-header {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1));
+    border-bottom-color: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .premium-perks li {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .plan-btn {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="light"] .plan-btn:hover {
+    background: rgba(6, 182, 212, 0.08);
+    border-color: var(--cyan);
+}
+
+[data-theme="light"] .plan-btn.activo {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: var(--cyan);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .metodo-pago select {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="light"] .btn-comprar {
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .btn-comprar:hover {
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .btn-cancelar-premium {
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="light"] .btn-cancelar-premium:hover {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.3);
+}
+
+[data-theme="light"] .codigo-display {
+    background: var(--bg-elevated);
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] #mensaje.exito {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--success);
+    color: #065f46;
+}
+
+[data-theme="light"] #mensaje.error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--error);
+    color: #991b1b;
+}

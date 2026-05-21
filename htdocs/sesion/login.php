@@ -1,0 +1,71 @@
+<?php
+session_start();
+require __DIR__ . '/../conexion.php';
+$mensaje = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $usuario = trim($_POST['usuario']);
+    $pass    = $_POST['contrasena'];
+
+    try {
+        // Permitir login tanto con nombre de usuario como con el email
+        $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE nombre = :u OR email = :u");
+        $stmt->execute([':u' => $usuario]);
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($pass, $user['contrasena'])) {
+            $_SESSION['usuario'] = $user['nombre']; // Siempre guardamos el nombre en sesión
+            $_SESSION['rol']     = $user['rol'];
+            // Dashboard está en funcionalidades/
+            header("Location: ../funcionalidades/cliente.php");
+            exit();
+        } else {
+            $mensaje = "<div class='mensaje' style='color:#ff4d4d;'>Credenciales inválidas.</div>";
+        }
+    } catch (PDOException $e) {
+        $mensaje = "<div class='mensaje' style='color:#ff4d4d;'>Error interno: " . htmlspecialchars($e->getMessage()) . "</div>";
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>VALTASY — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d0d0f; color: #e8e8ee; font-family: 'Barlow Condensed', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; background-image: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(140, 8, 19, 0.12) 0%, transparent 70%); }
+        .card { background: #141418; border: 1px solid rgba(29, 242, 221, 0.12); padding: 40px; width: 100%; max-width: 400px; border-top: 2px solid #168C77; }
+        h2 { font-family: 'Orbitron', sans-serif; text-transform: uppercase; margin-bottom: 20px; text-align: center; }
+        .mensaje { padding: 10px; margin-bottom: 20px; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.1); }
+        input { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #fff; margin-bottom: 15px; }
+        button { width: 100%; padding: 14px; background: linear-gradient(135deg, #168C77, #1DF2DD); color: #000; border: none; cursor: pointer; font-weight: bold; clip-path: polygon(5% 0, 100% 0, 95% 100%, 0 100%); transition: opacity 0.2s; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .link { display: block; text-align: center; margin-top: 15px; color: #A63247; text-decoration: none; }
+        .link-home { display: block; text-align: center; margin-top: 10px; color: #6b6b7a; text-decoration: none; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Login</h2>
+        <?php echo $mensaje; ?>
+        <form id="formLogin" method="POST" action="login.php">
+            <input type="text"     name="usuario"    placeholder="USUARIO O EMAIL" required>
+            <input type="password" name="contrasena" placeholder="CONTRASEÑA" required>
+            <button type="submit" id="btnLogin">ACCEDER</button>
+        </form>
+        <a href="registro.php" class="link">¿No tienes cuenta? Regístrate</a>
+        <a href="../index.html" class="link-home">← Volver al inicio</a>
+    </div>
+
+    <!-- Previene doble click accidental en el acceso -->
+    <script>
+        document.getElementById('formLogin').addEventListener('submit', function() {
+            var btn = document.getElementById('btnLogin');
+            btn.disabled = true;
+            btn.innerHTML = 'VERIFICANDO...';
+        });
+    </script>
+</body>
+</html>
