@@ -200,7 +200,7 @@ function renderizarTabla() {
         <tr>
             <td><strong>${escapeHtml(jugador.nickname)}</strong></td>
             <td>${escapeHtml(jugador.equipo || '-')}</td>
-            <td><span class="rol-badge rol-${(jugador.rol || '').toLowerCase()}">${escapeHtml(jugador.rol || '-')}</span></td>
+            <td><span class="rol-badge rol-${(jugador.rol || '').toLowerCase().replace('é','e').replace('á','a')}">${escapeHtml(jugador.rol || '-')}</span></td>
             <td>${formatearNumero(jugador.kills)}</td>
             <td>${formatearNumero(jugador.deaths)}</td>
             <td>${formatearNumero(jugador.assists)}</td>

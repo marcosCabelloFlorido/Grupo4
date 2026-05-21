@@ -12,6 +12,7 @@ $nombre_usuario_actual = $_SESSION['usuario'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VALTASY — Noticias</title>
+    <script src="js/theme-init.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/noticias.css">
@@ -19,11 +20,13 @@ $nombre_usuario_actual = $_SESSION['usuario'];
 <body>
 
 <div class="header">
-    <div class="header-logo">VALT<span>ASY</span></div>
+    <div class="header-logo">
+        <img src="../img/logovaltasy_rojo.png" alt="VALTASY" class="header-logo-img"><span class="header-logo-text">VALT<span>ASY</span></span>
+    </div>
     <div class="header-right">
         <p>AGENTE: <span><?= htmlspecialchars($nombre_usuario_actual) ?></span></p>
-        <div id="premiumBadge" style="margin-top:4px;"></div>
-        <a href="../sesion/cerrar.php" style="margin-top:6px; display:inline-block;">[ DESCONECTAR ]</a>
+        <span id="header-badge-premium"></span>
+        <a href="../sesion/cerrar.php">[ DESCONECTAR ]</a>
     </div>
 </div>
 

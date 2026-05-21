@@ -49,10 +49,22 @@ function renderizarLigas(ligas) {
                 <div class="dato"><span>PRESUPUESTO</span><span style="color:#4ade80;">${presupuesto} €</span></div>
             </a>
             <div class="liga-card-footer btn-grid-container">
-                <a href="mercado.php?id_liga=${encodeURIComponent(liga.id_liga)}" class="btn-card-action btn-purple">🛒 MERCADO</a>
-                <button class="btn-tienda-card btn-card-action btn-cyan" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">💳 FONDOS</button>
-                <button class="btn-recompensa-card btn-card-action btn-yellow" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">🎁 DIARIA</button>
-                <button class="btn-eliminar btn-card-action btn-red" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">✕ SALIR</button>
+                <a href="mercado.php?id_liga=${encodeURIComponent(liga.id_liga)}" class="btn-card-action btn-purple">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1h1.5l1 5h5.5l1-3.5H3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="10" r="1" fill="currentColor"/><circle cx="9" cy="10" r="1" fill="currentColor"/></svg>
+                    Mercado
+                </a>
+                <button class="btn-tienda-card btn-card-action btn-cyan" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="3.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 3.5V3a2 2 0 0 1 4 0v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1 6.5h10" stroke="currentColor" stroke-width="1.3"/></svg>
+                    Fondos
+                </button>
+                <button class="btn-recompensa-card btn-card-action btn-yellow" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 2.4L10 3.9l-2 1.95.47 2.75L6 7.4l-2.47 1.2L4 5.85 2 3.9l2.8-.5L6 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M4 10.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6 8v2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    Diaria
+                </button>
+                <button class="btn-eliminar btn-card-action btn-red" data-id="${liga.id_liga}" data-nombre="${escapeHtml(liga.nombre_liga)}">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 3h8M5 3V2h2v1M4.5 3v6M7.5 3v6M3 3l.5 7h5L9 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Salir
+                </button>
             </div>`;
 
         contenedor.appendChild(card);
@@ -220,10 +232,16 @@ async function verificarPremiumDashboard() {
     try {
         const res  = await fetch(`api_premium.php?usuario=${encodeURIComponent(USUARIO_ACTUAL)}`);
         const json = await res.json();
-        const badge = document.getElementById('premiumHeaderBadge');
+        const badge = document.getElementById('header-badge-premium');
         if (!badge) return;
-        if (json.status === 'success' && json.es_premium) { esPremium = true; badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>'; } 
-        else { esPremium = false; badge.innerHTML = '<span class="badge-no-premium" id="badgeAbrirPremium" style="margin-left: 10px; cursor:pointer; color:#A63247; font-weight:bold; border: 1px solid #A63247; padding: 2px 6px; border-radius: 4px;">⚡ Activar Premium</span>'; document.getElementById('badgeAbrirPremium').addEventListener('click', abrirModalPremium); }
+        if (json.status === 'success' && json.es_premium) {
+            esPremium = true;
+            badge.innerHTML = '<span class="badge-premium">⚡ PREMIUM</span>';
+        } else {
+            esPremium = false;
+            badge.innerHTML = '<span class="badge-activar-premium" id="badgeAbrirPremium">⚡ Activar Premium</span>';
+            document.getElementById('badgeAbrirPremium').addEventListener('click', abrirModalPremium);
+        }
     } catch (_) {}
 }
 
@@ -244,7 +262,9 @@ document.getElementById('btnComprarPremium').addEventListener('click', async () 
         const res = await fetch('api_premium.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accion: 'comprar', nombre_usuario: USUARIO_ACTUAL, metodo_pago: metodo, meses: planMeses }) });
         const json = await res.json();
         if (json.status === 'success') {
-            esPremium = true; const badge = document.getElementById('premiumHeaderBadge'); if (badge) badge.innerHTML = '<span class="badge-premium" style="margin-left: 10px;">⚡ PREMIUM</span>';
+            esPremium = true;
+            const badge = document.getElementById('header-badge-premium');
+            if (badge) badge.innerHTML = '<span class="badge-premium">⚡ PREMIUM</span>';
             msg.style.display = 'block'; msg.style.color = '#1DF2DD'; msg.style.border = '1px solid #1DF2DD'; msg.style.background = 'rgba(29,242,221,0.08)'; msg.textContent = `✓ ¡Premium activo hasta ${new Date(json.premium_hasta).toLocaleDateString('es-ES')}!`;
             setTimeout(() => { document.getElementById('modalPremium').classList.add('hidden'); msg.style.display = 'none'; }, 2200);
         } else {

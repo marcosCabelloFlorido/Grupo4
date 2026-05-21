@@ -87,17 +87,30 @@ h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
 }
 
 [data-theme="light"] .topbar,
-[data-theme="light"] .nav-sub,
-[data-theme="light"] .header {
+[data-theme="light"] .nav-sub {
     background: rgba(255, 255, 255, 0.95);
     border-bottom-color: rgba(15, 23, 42, 0.1);
     backdrop-filter: blur(12px);
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
 
+/* El .header siempre mantiene fondo transparente y borde rojo en modo claro */
 [data-theme="light"] .header {
-    padding: 28px 50px;
+    background: transparent;
     border-bottom: 2px solid var(--red-soft);
+    box-shadow: none;
+}
+
+[data-theme="light"] .header-logo {
+    color: var(--text);
+}
+
+[data-theme="light"] .header-logo span {
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .header > h1 {
+    color: var(--text);
 }
 
 [data-theme="light"] .rank-row,
@@ -170,17 +183,20 @@ h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
 }
 
 /* Mejoras visuales generales */
-[data-theme="light"] .header-logo {
-    color: var(--red-soft);
-}
-
-[data-theme="light"] .header-logo span {
-    color: var(--red-soft);
-}
-
 [data-theme="light"] .badge-premium {
     background: linear-gradient(135deg, #f59e0b, #fbbf24);
     box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="light"] .badge-activar-premium {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #b45309;
+}
+
+[data-theme="light"] .badge-activar-premium:hover {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: #f59e0b;
 }
 
 [data-theme="light"] #notificacion.exito {
@@ -200,6 +216,7 @@ h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: transparent;
     border-bottom: 2px solid var(--red-soft);
     padding: 24px 40px;
     margin-bottom: 20px;
@@ -210,10 +227,55 @@ h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
     font-weight: 900;
     letter-spacing: 0.15em;
     color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
 }
 .header-logo span { color: var(--cyan); }
 
-.header-right { text-align: right; }
+/* Texto del nombre — evita espacios en blanco entre img y texto */
+.header-logo-text {
+    display: inline;
+    line-height: 1;
+}
+
+/* Logo imagen en el header */
+.header-logo-img {
+    height: 46px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 6px rgba(166, 50, 71, 0.35));
+}
+
+/* Logo en el topbar de ver_liga */
+.topbar-logo-img {
+    height: 34px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 4px rgba(166, 50, 71, 0.3));
+}
+
+/* Compatibilidad con páginas que usan <h1> directamente en .header */
+.header > h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: #fff;
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    text-align: right;
+}
 .header-right p { font-size: 1rem; color: var(--muted); letter-spacing: 0.05em; }
 .header-right span { color: var(--cyan); font-weight: 700; }
 .header-right a {

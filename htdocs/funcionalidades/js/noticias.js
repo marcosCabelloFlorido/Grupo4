@@ -7,6 +7,14 @@ const CATS   = { vct: 'VCT', patch: 'PARCHE', esports: 'ESPORTS', general: 'GENE
 const TCLASS = { vct: 'tag-vct', patch: 'tag-patch', esports: 'tag-esports', general: 'tag-general' };
 const EMOJIS = { vct: '🎯', patch: '⚙️', esports: '🏆', general: '📡' };
 
+// ── Imágenes por categoría ───────────────────────────────
+const CAT_IMGS = {
+    vct:     '../img/01b05233883ae5d4fd3b62bee00b4a6654d83f48-1920x1080.jpg',
+    patch:   '../img/ValorantWallpaper_Reaver.width-1000.format-webp.webp',
+    esports: '../img/red-bull-campus-clutch-valorant-agents-phoenix-jett.avif',
+    general: '../img/descarga (1).jpeg'
+};
+
 let todas = [], filtradas = [], catActiva = 'all', busy = false;
 
 /* ── Toast de notificación ──────────────────────────────── */
@@ -41,9 +49,12 @@ function skeleton(n = 6) {
 function cardHTML(art, idx) {
     const feat = idx === 0 && catActiva === 'all';
     const cls  = ['news-card', feat ? 'featured' : '', art.breaking ? 'breaking' : ''].filter(Boolean).join(' ');
+    const img  = CAT_IMGS[art.categoria] || CAT_IMGS.general;
     return `
     <article class="${cls}" onclick="abrirModal(${idx})">
-        <div class="card-icon">${EMOJIS[art.categoria] || '📡'}</div>
+        <div class="card-icon">
+            <img src="${img}" alt="${esc(art.categoria)}" class="card-img" loading="lazy">
+        </div>
         <div class="news-body">
             <div class="news-meta">
                 <span class="news-source">${esc(art.fuente)}</span>
@@ -183,11 +194,12 @@ async function checkPremium() {
     try {
         const res = await fetch(`api_premium.php?usuario=${encodeURIComponent(USUARIO)}`);
         const j   = await res.json();
-        const el  = document.getElementById('premiumBadge');
+        const el  = document.getElementById('header-badge-premium');
+        if (!el) return;
         if (j.es_premium) {
-            el.innerHTML = '<span style="color:#FFC800;font-size:0.8rem;font-weight:700;letter-spacing:0.06em;">⚡ PREMIUM</span>';
+            el.innerHTML = '<span class="badge-premium">⚡ PREMIUM</span>';
         } else {
-            el.innerHTML = '<a href="crear_liga.php" style="color:#6b6b7a;font-size:0.8rem;text-decoration:none;" onmouseover="this.style.color=\'#A63247\'" onmouseout="this.style.color=\'#6b6b7a\'">⚡ Activar Premium</a>';
+            el.innerHTML = '<a href="crear_liga.php" class="badge-activar-premium">⚡ Activar Premium</a>';
         }
     } catch (_) {}
 }

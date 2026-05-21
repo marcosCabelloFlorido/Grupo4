@@ -31,6 +31,7 @@ if ($id_liga) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VALTASY — Estadísticas Premium</title>
+    <script src="js/theme-init.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/estadisticas.css">
@@ -38,12 +39,18 @@ if ($id_liga) {
 <body>
 
 <div class="header">
-    <div class="header-logo">VALT<span>ASY</span></div>
+    <div class="header-logo">
+        <img src="../img/logovaltasy_rojo.png" alt="VALTASY" class="header-logo-img"><span class="header-logo-text">VALT<span>ASY</span></span>
+    </div>
     <div class="header-right">
         <p>AGENTE: <span><?= htmlspecialchars($nombre_usuario_actual) ?></span></p>
-        <?php if ($es_premium): ?>
-            <div class="badge-premium">⚡ PREMIUM</div>
-        <?php endif; ?>
+        <span id="header-badge-premium">
+            <?php if ($es_premium): ?>
+                <span class="badge-premium">⚡ PREMIUM</span>
+            <?php else: ?>
+                <a href="crear_liga.php" class="badge-activar-premium">⚡ Activar Premium</a>
+            <?php endif; ?>
+        </span>
         <?php if ($id_liga && $liga_info): ?>
             <a href="ver_liga.php?id_liga=<?= $id_liga ?>" class="btn-volver-liga">← Volver a <?= htmlspecialchars($liga_info['nombre']) ?></a>
         <?php endif; ?>
@@ -110,10 +117,10 @@ if ($id_liga) {
             <label>Rol:</label>
             <select id="filtroRol" class="filter-select">
                 <option value="">Todos los roles</option>
-                <option value="Duelist">Duelist</option>
-                <option value="Initiator">Initiator</option>
-                <option value="Controller">Controller</option>
-                <option value="Sentinel">Sentinel</option>
+                <option value="Duelista">Duelista</option>
+                <option value="Iniciador">Iniciador</option>
+                <option value="Smoker">Smoker</option>
+                <option value="Centinela">Centinela</option>
             </select>
         </div>
         <div class="filter-group">

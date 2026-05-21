@@ -9,7 +9,7 @@
     // ── Configuración del sistema de temas ──────────────────
     const THEME_CONFIG = {
         STORAGE_KEY: 'valtasy-theme',
-        DEFAULT_THEME: 'dark',
+        DEFAULT_THEME: 'light',   // Modo claro fijo como predeterminado
         THEMES: ['dark', 'light'],
         ATTRIBUTE: 'data-theme'
     };
@@ -45,6 +45,11 @@
         loadTheme() {
             try {
                 const saved = localStorage.getItem(THEME_CONFIG.STORAGE_KEY);
+                if (!saved) {
+                    // Primera visita: guardar el tema por defecto (light)
+                    localStorage.setItem(THEME_CONFIG.STORAGE_KEY, THEME_CONFIG.DEFAULT_THEME);
+                    return THEME_CONFIG.DEFAULT_THEME;
+                }
                 return THEME_CONFIG.THEMES.includes(saved) ? saved : THEME_CONFIG.DEFAULT_THEME;
             } catch (e) {
                 console.warn('No se pudo acceder a localStorage:', e);

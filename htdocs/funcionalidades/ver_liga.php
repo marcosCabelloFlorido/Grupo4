@@ -101,6 +101,7 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
 <head>
     <meta charset="UTF-8">
     <title>VALTASY — <?php echo htmlspecialchars($liga_info['nombre_liga'] ?? 'Error'); ?></title>
+    <script src="js/theme-init.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/ver_liga.css">
@@ -133,13 +134,11 @@ function getColor($rol) { $colores = ['Duelista'=>'#ff4d6d', 'Iniciador'=>'#4dff
 
 <div class="topbar">
     <div class="topbar-left">
+        <img src="../img/logovaltasy_rojo.png" alt="VALTASY" class="topbar-logo-img">
         <a href="cliente.php" class="btn-back">Dashboard</a>
         <span class="topbar-title"><?php echo htmlspecialchars($liga_info['nombre_liga']); ?></span>
     </div>
     <div class="topbar-right">
-        <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
-            <div class="theme-toggle-slider">🌙</div>
-        </div>
         <span class="torneo-label">🏆 <?php echo htmlspecialchars($liga_info['torneo']); ?></span>
         <select id="jornadaSelect" class="select-jornada">
             <option value="1">Jornada 1</option>

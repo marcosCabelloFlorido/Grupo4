@@ -10,8 +10,9 @@ $nombre_usuario_actual = $_SESSION['usuario'];
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Operación — VALTASY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/theme-init.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/crear_liga.css">
@@ -20,12 +21,14 @@ $nombre_usuario_actual = $_SESSION['usuario'];
 
     <div class="header">
         <div style="display:flex; align-items:center; gap:16px;">
-            <h1>VALTASY <span style="font-size:0.5em; color:gray;">CREACIÓN</span></h1>
-            <span id="badgePremiumHeader"></span>
+            <div class="header-logo">
+                <img src="../img/logovaltasy_rojo.png" alt="VALTASY" class="header-logo-img"><span class="header-logo-text">VALT<span>ASY</span></span> <span style="font-size:0.5em; color:var(--muted); font-family:'Barlow Condensed', sans-serif; font-weight:400;">CREACIÓN</span>
+            </div>
+            <span id="header-badge-premium"></span>
         </div>
-        <div style="text-align:right;">
-            <p style="font-size:1rem; color:#6b6b7a; margin-bottom:4px;">AGENTE: <span style="color:#1DF2DD; font-weight:700;"><?php echo htmlspecialchars($nombre_usuario_actual); ?></span></p>
-            <a href="../sesion/cerrar.php" style="color:#6b6b7a; text-decoration:none; font-size:0.85rem;">[ DESCONECTAR ]</a>
+        <div class="header-right">
+            <p>AGENTE: <span><?php echo htmlspecialchars($nombre_usuario_actual); ?></span></p>
+            <a href="../sesion/cerrar.php">[ DESCONECTAR ]</a>
         </div>
     </div>
 

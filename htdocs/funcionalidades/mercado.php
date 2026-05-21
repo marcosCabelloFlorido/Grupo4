@@ -159,6 +159,7 @@ function getColor($rol) {
 <head>
     <meta charset="UTF-8">
     <title>Mercado de Fichajes — VALTASY</title>
+    <script src="js/theme-init.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <!-- El ?v=3.0 forzará a tu navegador a recargar el diseño de mercado -->
@@ -167,7 +168,9 @@ function getColor($rol) {
 <body>
 
     <div class="header">
-        <h1>MERCADO DE FICHAJES</h1>
+        <div class="header-logo">
+            <img src="../img/logovaltasy_rojo.png" alt="VALTASY" class="header-logo-img"><span class="header-logo-text">MERCADO <span>DE FICHAJES</span></span>
+        </div>
         <div class="header-info">
             <div class="fondos-label">FONDOS DISPONIBLES</div>
             <div class="fondos"><?php echo number_format($datos_equipo['presupuesto_disponible'] ?? 0, 0, ',', '.'); ?> €</div>

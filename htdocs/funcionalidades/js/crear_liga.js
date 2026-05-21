@@ -21,7 +21,7 @@ async function verificarPremium() {
 }
 
 function actualizarUI() {
-    const badge   = document.getElementById('badgePremiumHeader');
+    const badge   = document.getElementById('header-badge-premium');
     const notice  = document.getElementById('lockNotice');
     const optPriv = document.getElementById('optionPrivada');
 
@@ -31,9 +31,9 @@ function actualizarUI() {
         optPriv.disabled     = false;
         optPriv.textContent  = '🔒 Clasificada (Privada)';
     } else {
-        badge.innerHTML = '<span class="badge-no-premium" id="badgeAbrirPremium">⚡ Activar Premium</span>';
+        badge.innerHTML = '<span class="badge-activar-premium" id="badgeAbrirPremium">⚡ Activar Premium</span>';
         document.getElementById('badgeAbrirPremium').addEventListener('click', abrirModalPremium);
-        optPriv.disabled = false; // permitimos seleccionarla para mostrar el aviso
+        optPriv.disabled = false;
     }
 }
 

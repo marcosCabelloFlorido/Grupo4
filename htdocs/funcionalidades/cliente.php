@@ -12,111 +12,21 @@ $nombre_usuario_actual = $_SESSION['usuario'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VALTASY — Dashboard</title>
+    <script src="js/theme-init.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/cliente.css">
     <link rel="stylesheet" href="css/crear_liga.css"> 
-    <style>
-        /* =========================================================
-           SISTEMA DE BOTONES UNIFICADO (GRID 2x2)
-           ========================================================= */
-        .btn-grid-container {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 10px !important;
-            width: 100% !important;
-            margin-top: 15px !important;
-            padding-top: 15px !important;
-            border-top: 1px solid rgba(255,255,255,0.05) !important;
-        }
-
-        .btn-card-action {
-            font-family: 'Orbitron', sans-serif !important;
-            font-weight: 900 !important;
-            font-size: 0.8rem !important;
-            text-transform: uppercase !important;
-            text-decoration: none !important;
-            text-align: center !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            padding: 12px 5px !important;
-            border-radius: 6px !important;
-            border: none !important;
-            color: #fff !important;
-            cursor: pointer !important;
-            transition: transform 0.2s, box-shadow 0.2s !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-            letter-spacing: 0.05em !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
-
-        .btn-card-action::before, .btn-card-action::after {
-            display: none !important;
-        }
-
-        .btn-card-action:hover {
-            transform: translateY(-2px) !important;
-        }
-
-        .btn-purple {
-            background: linear-gradient(45deg, #8b5cf6, #6d28d9) !important; 
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2) !important;
-        }
-        .btn-purple:hover { box-shadow: 0 0 15px rgba(139, 92, 246, 0.5) !important; }
-
-        .btn-cyan {
-            background: linear-gradient(45deg, #22d3ee, #0891b2) !important; 
-            box-shadow: 0 0 10px rgba(34, 211, 238, 0.2) !important;
-        }
-        .btn-cyan:hover { box-shadow: 0 0 15px rgba(34, 211, 238, 0.5) !important; }
-
-        .btn-yellow {
-            background: linear-gradient(45deg, #eab308, #ca8a04) !important; 
-            color: #1e1e28 !important;
-            box-shadow: 0 0 10px rgba(234, 179, 8, 0.2) !important;
-        }
-        .btn-yellow:hover { box-shadow: 0 0 15px rgba(234, 179, 8, 0.5) !important; }
-
-        .btn-red {
-            background: linear-gradient(45deg, #ef4444, #b91c1c) !important; 
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2) !important;
-        }
-        .btn-red:hover { box-shadow: 0 0 15px rgba(239, 68, 68, 0.5) !important; }
-
-        /* Estilos de Modales */
-        .modal-recompensa-box, .modal-tienda-box {
-            background: #1e1e28; padding: 30px; border-radius: 8px; width: 90%; max-width: 450px;
-            text-align: center; color: #fff; position: relative;
-        }
-        .modal-recompensa-box { border: 2px solid #eab308; }
-        .modal-tienda-box { border: 2px solid #22d3ee; }
-        .modal-header-title { font-family: 'Orbitron', sans-serif; margin-bottom: 5px; font-size: 1.2rem; }
-        .titulo-amarillo { color: #eab308; }
-        .titulo-cyan { color: #22d3ee; }
-        .recompensa-stats { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; margin: 25px 0 10px; text-align: left; }
-        .recompensa-stats div { display: flex; justify-content: space-between; margin-bottom: 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; }
-        .recompensa-total { font-size: 1.5rem !important; color: #eab308; font-weight: bold; padding-top: 15px; border-top: 1px dashed rgba(234, 179, 8, 0.3); }
-        .tienda-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
-        .tienda-pack { background: rgba(255,255,255,0.03); border: 1px solid rgba(34, 211, 238, 0.2); border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s; }
-        .tienda-pack:hover, .tienda-pack.activo { background: rgba(34, 211, 238, 0.1); border-color: #22d3ee; transform: scale(1.05); }
-        .pack-monto { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #22d3ee; font-weight: bold; margin-bottom: 5px; }
-        .pack-precio { font-size: 0.9rem; color: #a1a1aa; background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 10px; display: inline-block; }
-        .btn-reclamar, .btn-comprar-pack { width: 100%; padding: 15px; font-size: 1.1rem; font-weight: 900; border: none; border-radius: 4px; cursor: pointer; font-family: 'Orbitron', sans-serif; margin-bottom: 15px; }
-        .btn-reclamar { background: #eab308; color: #1e1e28; }
-        .btn-comprar-pack { background: #22d3ee; color: #1e1e28; }
-        .btn-reclamar:disabled, .btn-comprar-pack:disabled { background: #3f3f46; color: #a1a1aa; cursor: not-allowed; }
-        #temporizadorRecompensa { color: #f87171; font-family: monospace; font-size: 1.1rem; }
-    </style>
 </head>
 <body>
     <div id="notificacion"></div>
     <div class="header">
-        <h1>VALTASY <span style="font-size:0.45em; color:#6b6b7a; font-family:'Barlow Condensed', sans-serif; font-weight:400; letter-spacing:0.1em;">DASHBOARD</span></h1>
+        <div class="header-logo">
+            <img src="../img/logovaltasy_rojo.png" alt="VALTASY" class="header-logo-img"><span class="header-logo-text">VALT<span>ASY</span></span> <span style="font-size:0.45em; color:#6b6b7a; font-family:'Barlow Condensed', sans-serif; font-weight:400; letter-spacing:0.1em;">DASHBOARD</span>
+        </div>
         <div class="header-right">
-            <p>AGENTE: <span><?php echo htmlspecialchars($nombre_usuario_actual); ?></span> <span id="premiumHeaderBadge"></span></p>
+        <p>AGENTE: <span><?php echo htmlspecialchars($nombre_usuario_actual); ?></span></p>
+            <span id="header-badge-premium"></span>
             <a href="../sesion/cerrar.php">[ DESCONECTAR ]</a>
         </div>
     </div>
@@ -130,8 +40,14 @@ $nombre_usuario_actual = $_SESSION['usuario'];
     <div class="seccion-header">
         <h2>// Operaciones Activas</h2>
         <div class="seccion-header-btns">
-            <a href="crear_liga.php" class="btn-crear">+ Crear Liga</a>
-            <button class="btn-unirse" id="btnAbrirModalUnirse">⊕ Unirse a Liga</button>
+            <a href="crear_liga.php" class="btn-crear">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                Crear Liga
+            </a>
+            <button class="btn-unirse" id="btnAbrirModalUnirse">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="4" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M1 12c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M11 6v4M13 8h-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Unirse a Liga
+            </button>
         </div>
     </div>
 
