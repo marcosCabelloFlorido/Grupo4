@@ -1,0 +1,448 @@
+/* ═══════════════════════════════════════════════════════════
+   global.css — Estilos compartidos de VALTASY
+   Usado por: cliente.php, crear_liga.php, noticias.php,
+              mercado.php, ver_liga.php
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Reset & base ─────────────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #0d0d0f;
+    color: #e8e8ee;
+    font-family: 'Barlow Condensed', sans-serif;
+    min-height: 100vh;
+    background-image:
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(140, 8, 19, 0.12) 0%, transparent 70%),
+        linear-gradient(rgba(29, 242, 221, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29, 242, 221, 0.02) 1px, transparent 1px);
+    background-size: cover, 60px 60px, 60px 60px;
+}
+
+h1, h2, h3 { font-family: 'Orbitron', monospace; text-transform: uppercase; }
+
+/* ── Variables de color ───────────────────────────────────── */
+:root {
+    --cyan:      #1DF2DD;
+    --cyan-dark: #168C77;
+    --red-soft:  #A63247;
+    --bg:        #0d0d0f;
+    --bg-card:   #141418;
+    --bg-elevated: #1a1a1f;
+    --border:    rgba(29, 242, 221, 0.12);
+    --text:      #e8e8ee;
+    --text-secondary: #b4b4be;
+    --muted:     #6b6b7a;
+    --purple:    #c084fc;
+    --success:   #4ade80;
+    --warning:   #fbbf24;
+    --error:     #f87171;
+}
+
+/* ── Tema Claro (Paleta Premium Mejorada) ─────────────────── */
+[data-theme="light"] {
+    --cyan:      #06b6d4;
+    --cyan-dark: #0891b2;
+    --red-soft:  #ef4444;
+    --bg:        #f5f7fa;        /* Fondo más oscuro, menos blanco */
+    --bg-card:   #ffffff;        /* Blanco puro para tarjetas */
+    --bg-elevated: #f1f5f9;      /* Gris claro para elevación */
+    --border:    rgba(15, 23, 42, 0.08);
+    --text:      #1e293b;        /* Gris azulado oscuro */
+    --text-secondary: #475569;   /* Gris medio */
+    --muted:     #64748b;        /* Gris para muted */
+    --purple:    #8b5cf6;        /* Morado vibrante */
+    --success:   #10b981;        /* Verde esmeralda */
+    --warning:   #f59e0b;        /* Ámbar */
+    --error:     #ef4444;        /* Rojo coral */
+}
+
+[data-theme="light"] body {
+    background: var(--bg);
+    color: var(--text);
+    background-image:
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 70%),
+        linear-gradient(rgba(6, 182, 212, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.02) 1px, transparent 1px);
+}
+
+/* ── Ajustes específicos para tema claro ──────────────────── */
+[data-theme="light"] .card-jugador,
+[data-theme="light"] .card,
+[data-theme="light"] .modal-box,
+[data-theme="light"] .card-agente,
+[data-theme="light"] .liga-card,
+[data-theme="light"] .news-card {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+    border-color: rgba(15, 23, 42, 0.1);
+    background: var(--bg-card);
+}
+
+[data-theme="light"] .card-jugador:hover,
+[data-theme="light"] .card-agente:hover,
+[data-theme="light"] .liga-card:hover,
+[data-theme="light"] .news-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+    border-color: var(--cyan);
+}
+
+[data-theme="light"] .topbar,
+[data-theme="light"] .nav-sub {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom-color: rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+/* El .header siempre mantiene fondo transparente y borde rojo en modo claro */
+[data-theme="light"] .header {
+    background: transparent;
+    border-bottom: 2px solid var(--red-soft);
+    box-shadow: none;
+}
+
+[data-theme="light"] .header-logo {
+    color: var(--text);
+}
+
+[data-theme="light"] .header-logo span {
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .header > h1 {
+    color: var(--text);
+}
+
+[data-theme="light"] .rank-row,
+[data-theme="light"] .card-jornada {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    background: var(--bg-card);
+}
+
+[data-theme="light"] .rank-row:hover,
+[data-theme="light"] .card-jornada:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+
+/* Inputs y formularios en modo claro */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.2);
+    color: var(--text);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+    outline: none;
+}
+
+/* Botones en modo claro */
+[data-theme="light"] .btn-crear,
+[data-theme="light"] .btn-unirse,
+[data-theme="light"] button[type="submit"] {
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .btn-crear:hover,
+[data-theme="light"] .btn-unirse:hover,
+[data-theme="light"] button[type="submit"]:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    transform: translateY(-1px);
+}
+
+/* Modales en modo claro */
+[data-theme="light"] .modal-overlay {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .stats-overlay {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+}
+
+/* Navegación en modo claro */
+[data-theme="light"] .nav-tab {
+    color: var(--muted);
+}
+
+[data-theme="light"] .nav-tab:hover {
+    color: var(--cyan);
+    background: rgba(6, 182, 212, 0.05);
+}
+
+[data-theme="light"] .nav-tab.activo {
+    color: var(--cyan);
+    background: var(--bg-card);
+    border-color: rgba(6, 182, 212, 0.3);
+}
+
+/* Mejoras visuales generales */
+[data-theme="light"] .badge-premium {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="light"] .badge-activar-premium {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #b45309;
+}
+
+[data-theme="light"] .badge-activar-premium:hover {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: #f59e0b;
+}
+
+[data-theme="light"] #notificacion.exito {
+    background: rgba(16, 185, 129, 0.95);
+    color: #065f46;
+    border-left-color: var(--success);
+}
+
+[data-theme="light"] #notificacion.error {
+    background: rgba(239, 68, 68, 0.95);
+    color: #991b1b;
+    border-left-color: var(--error);
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border-bottom: 2px solid var(--red-soft);
+    padding: 24px 40px;
+    margin-bottom: 20px;
+}
+.header-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+.header-logo span { color: var(--cyan); }
+
+/* Texto del nombre — evita espacios en blanco entre img y texto */
+.header-logo-text {
+    display: inline;
+    line-height: 1;
+}
+
+/* Logo imagen en el header */
+.header-logo-img {
+    height: 46px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 6px rgba(166, 50, 71, 0.35));
+}
+
+/* Logo en el topbar de ver_liga */
+.topbar-logo-img {
+    height: 34px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 4px rgba(166, 50, 71, 0.3));
+}
+
+/* Compatibilidad con páginas que usan <h1> directamente en .header */
+.header > h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: #fff;
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    text-align: right;
+}
+.header-right p { font-size: 1rem; color: var(--muted); letter-spacing: 0.05em; }
+.header-right span { color: var(--cyan); font-weight: 700; }
+.header-right a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+}
+.header-right a:hover { color: var(--red-soft); }
+
+/* ── Barra de navegación principal ───────────────────────── */
+.nav-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid rgba(29, 242, 221, 0.12);
+}
+.nav-tab {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 10px 22px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: color 0.2s, background 0.2s;
+    position: relative;
+    top: 1px;
+}
+.nav-tab:hover { color: var(--cyan); }
+.nav-tab.activo {
+    color: var(--cyan);
+    background: var(--bg-card);
+    border-color: rgba(29, 242, 221, 0.25);
+    border-bottom-color: var(--bg-card);
+}
+
+/* ── Notificación flotante ────────────────────────────────── */
+#notificacion {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    display: none;
+    z-index: 1000;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+#notificacion.exito {
+    background: rgba(22, 140, 119, 0.95);
+    color: var(--cyan);
+    border-left: 3px solid var(--cyan);
+}
+#notificacion.error {
+    background: rgba(140, 8, 19, 0.95);
+    color: #ff6b80;
+    border-left: 3px solid var(--red-soft);
+}
+
+/* ── Badge Premium ────────────────────────────────────────── */
+.badge-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, #b45309, #fbbf24);
+    color: #000;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    padding: 3px 9px;
+    clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    margin-left: 10px;
+}
+.badge-activar-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 190, 0, 0.35);
+    color: #fbbf24;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    padding: 3px 10px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: background 0.2s;
+}
+.badge-activar-premium:hover { background: rgba(255, 190, 0, 0.1); }
+
+/* ── Modal base compartido ────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.modal-overlay.hidden { display: none; }
+
+/* ── Toggle de tema ───────────────────────────────────────── */
+.theme-toggle {
+    position: relative;
+    width: 56px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-toggle-slider {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #1DF2DD, #168C77);
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(29, 242, 221, 0.4);
+    left: 2px;
+}
+
+.theme-toggle.active .theme-toggle-slider {
+    transform: translateX(28px);
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="light"] .theme-toggle {
+    background: rgba(15, 23, 42, 0.08);
+    border-color: rgba(15, 23, 42, 0.15);
+}
+
+[data-theme="light"] .theme-toggle:hover {
+    background: rgba(15, 23, 42, 0.12);
+    border-color: rgba(15, 23, 42, 0.25);
+}
+
+[data-theme="light"] .theme-toggle-slider {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+}
+
+[data-theme="light"] .theme-toggle.active .theme-toggle-slider {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}

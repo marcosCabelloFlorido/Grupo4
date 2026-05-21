@@ -1,0 +1,774 @@
+/* ═══════════════════════════════════════════════════════════
+   cliente.css — Estilos exclusivos del Dashboard
+   ═══════════════════════════════════════════════════════════ */
+
+body { padding: 40px 50px; }
+
+/* ── Botones principales: Crear Liga / Unirse ─────────────── */
+.btn-crear {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    background: linear-gradient(135deg, #0e7490 0%, #1DF2DD 100%);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 14px rgba(29, 242, 221, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-crear:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(29, 242, 221, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+    color: #fff;
+}
+.btn-crear:active { transform: translateY(0); }
+
+.btn-unirse {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 10px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: background 0.2s ease, border-color 0.2s ease,
+                color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    margin-left: 10px;
+}
+.btn-unirse:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(29, 242, 221, 0.4);
+    color: var(--cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+.btn-unirse:active { transform: translateY(0); }
+
+/* ── Cabecera de sección ──────────────────────────────────── */
+.seccion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.seccion-header h2 {
+    font-size: 1.1rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+}
+.seccion-header-btns { display: flex; gap: 0; }
+
+/* ── Grid de ligas ────────────────────────────────────────── */
+.grid-ligas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* ── Tarjeta de liga ──────────────────────────────────────── */
+.liga-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(29, 242, 221, 0.12);
+    border-top: 2px solid var(--cyan);
+    padding: 0;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+.liga-card:hover {
+    border-color: rgba(29, 242, 221, 0.4);
+    box-shadow: 0 4px 24px rgba(29, 242, 221, 0.08);
+}
+
+.liga-card-link {
+    display: block;
+    padding: 22px 22px 16px 22px;
+    text-decoration: none;
+    color: inherit;
+    flex: 1;
+}
+.liga-card-link h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem;
+    color: var(--cyan);
+    margin-bottom: 14px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.liga-card-link .dato {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.liga-card-link .dato span:last-child {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.liga-card-footer {
+    padding: 12px 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Botones de tarjeta ───────────────────────────────────── */
+.btn-mercado {
+    display: inline-block;
+    background: none;
+    border: 1px solid rgba(29, 242, 221, 0.4);
+    color: var(--cyan);
+    padding: 6px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn-mercado:hover {
+    background: rgba(29, 242, 221, 0.1);
+    border-color: var(--cyan);
+    color: #fff;
+}
+
+.btn-eliminar {
+    background: none;
+    border: 1px solid rgba(166, 50, 71, 0.4);
+    color: var(--red-soft);
+    padding: 6px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    transition: background 0.2s, color 0.2s;
+}
+.btn-eliminar:hover {
+    background: rgba(140, 8, 19, 0.3);
+    border-color: var(--red-soft);
+    color: #ff6b80;
+}
+.btn-eliminar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Badge de tipo de liga ────────────────────────────────── */
+.badge-tipo {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    margin-bottom: 12px;
+}
+.badge-tipo.privada { background: rgba(140, 8, 19, 0.3); color: var(--red-soft); border: 1px solid var(--red-soft); }
+.badge-tipo.publica { background: rgba(29, 242, 221, 0.1); color: var(--cyan); border: 1px solid var(--cyan); }
+
+/* ── Estado de mensajes en el grid ───────────────────────── */
+.estado-mensaje {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+}
+.estado-mensaje span {
+    display: block;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--cyan);
+    margin-top: 8px;
+}
+
+/* ── MODAL: Unirse a liga ─────────────────────────────────── */
+.modal-box {
+    background: var(--bg-card);
+    border: 1px solid rgba(29, 242, 221, 0.2);
+    border-top: 3px solid var(--red-soft);
+    padding: 36px;
+    max-width: 520px;
+    width: 92%;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+.modal-box h2 {
+    font-family: 'Orbitron';
+    color: var(--text);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+}
+.modal-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 24px;
+}
+.modal-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.modal-tab.activo { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+.tab-panel { display: none; }
+.tab-panel.activo { display: block; }
+
+.modal-input-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+.modal-input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    margin-bottom: 16px;
+    font-family: 'Barlow Condensed';
+    font-size: 1rem;
+}
+.modal-input:focus { outline: none; border-color: rgba(29, 242, 221, 0.4); }
+.input-codigo {
+    font-family: 'Orbitron';
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.btn-modal-accion {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #8C0813, var(--red-soft));
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow Condensed';
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: box-shadow 0.2s;
+}
+.btn-modal-accion:hover { box-shadow: 0 6px 24px rgba(140, 8, 19, 0.5); }
+.btn-modal-accion:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-modal-cerrar {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--muted);
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: 'Barlow Condensed';
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.btn-modal-cerrar:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text);
+}
+
+.modal-error {
+    color: #ff6b80;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    padding: 10px;
+    background: rgba(140, 8, 19, 0.15);
+    border: 1px solid rgba(166, 50, 71, 0.4);
+    display: none;
+}
+.modal-error.visible { display: block; }
+
+/* ── Lista de ligas públicas en modal ─────────────────────── */
+.lista-ligas-publicas { margin-top: 4px; }
+.liga-publica-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(29, 242, 221, 0.1);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.liga-publica-item:hover { border-color: rgba(29, 242, 221, 0.4); background: rgba(29, 242, 221, 0.04); }
+.liga-publica-item.seleccionada { border-color: var(--cyan); background: rgba(29, 242, 221, 0.08); }
+.liga-publica-nombre { font-family: 'Orbitron'; font-size: 0.8rem; color: var(--cyan); margin-bottom: 4px; }
+.liga-publica-meta { font-size: 0.82rem; color: var(--muted); }
+.liga-publica-plazas { font-size: 0.8rem; color: var(--text); font-weight: 700; }
+.cargando-ligas { color: var(--muted); text-align: center; padding: 20px; font-size: 0.9rem; }
+.sin-ligas { color: var(--muted); text-align: center; padding: 20px; font-size: 0.9rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   MODO CLARO - Cliente Dashboard
+   ═══════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .liga-card {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .liga-card:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 8px 16px rgba(6, 182, 212, 0.15);
+    transform: translateY(-2px);
+}
+
+[data-theme="light"] .liga-card-footer {
+    border-top-color: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .btn-crear {
+    box-shadow: 0 2px 4px rgba(6, 182, 212, 0.2);
+}
+
+[data-theme="light"] .btn-crear:hover {
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.3);
+    transform: translateY(-1px);
+}
+
+[data-theme="light"] .btn-unirse {
+    border-color: var(--red-soft);
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .btn-unirse:hover {
+    background: rgba(239, 68, 68, 0.1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="light"] .btn-mercado {
+    border-color: rgba(6, 182, 212, 0.3);
+    color: var(--cyan);
+}
+
+[data-theme="light"] .btn-mercado:hover {
+    background: rgba(6, 182, 212, 0.1);
+    border-color: var(--cyan);
+}
+
+[data-theme="light"] .btn-eliminar {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .btn-eliminar:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--red-soft);
+}
+
+[data-theme="light"] .modal-box {
+    background: var(--bg-card);
+    border-color: rgba(15, 23, 42, 0.15);
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 10px 10px -5px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .modal-input {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.15);
+}
+
+[data-theme="light"] .modal-input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+[data-theme="light"] .modal-tabs {
+    border-bottom-color: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .liga-publica-item {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .liga-publica-item:hover {
+    border-color: var(--cyan);
+    background: rgba(6, 182, 212, 0.05);
+}
+
+[data-theme="light"] .liga-publica-item.seleccionada {
+    border-color: var(--cyan);
+    background: rgba(6, 182, 212, 0.1);
+}
+
+[data-theme="light"] .modal-error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--error);
+}
+
+[data-theme="light"] .badge-tipo.privada {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--red-soft);
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .badge-tipo.publica {
+    background: rgba(6, 182, 212, 0.1);
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOTONES DE ACCIÓN EN TARJETAS DE LIGA (GRID 2x2)
+   ═══════════════════════════════════════════════════════════ */
+
+.btn-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 14px 18px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn-card-action {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 9px 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease,
+                color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    width: 100%;
+    box-sizing: border-box;
+    backdrop-filter: blur(4px);
+}
+.btn-card-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Mercado — cyan */
+.btn-purple:hover {
+    background: rgba(29, 242, 221, 0.08);
+    border-color: rgba(29, 242, 221, 0.35);
+    color: var(--cyan);
+}
+
+/* Fondos — amber */
+.btn-cyan:hover {
+    background: rgba(251, 191, 36, 0.08);
+    border-color: rgba(251, 191, 36, 0.35);
+    color: var(--warning);
+}
+
+/* Diaria — purple */
+.btn-yellow:hover {
+    background: rgba(192, 132, 252, 0.08);
+    border-color: rgba(192, 132, 252, 0.35);
+    color: var(--purple);
+}
+
+/* Salir — rojo muy suave */
+.btn-red:hover {
+    background: rgba(248, 113, 113, 0.07);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: var(--error);
+}
+
+.btn-card-action:active  { transform: translateY(0); }
+.btn-card-action:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODALES DE RECOMPENSA Y TIENDA
+   ═══════════════════════════════════════════════════════════ */
+
+.modal-recompensa-box,
+.modal-tienda-box {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 32px;
+    width: 90%;
+    max-width: 440px;
+    text-align: center;
+    color: var(--text);
+    position: relative;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+}
+.modal-recompensa-box { border-top: 2px solid var(--warning); }
+.modal-tienda-box     { border-top: 2px solid var(--cyan); }
+
+.modal-header-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+.titulo-amarillo { color: var(--warning); }
+.titulo-cyan     { color: var(--cyan); }
+
+.recompensa-stats {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 20px 0 10px;
+    text-align: left;
+}
+.recompensa-stats div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+.recompensa-total {
+    font-size: 1.3rem !important;
+    color: var(--warning) !important;
+    font-weight: 700;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 0 !important;
+}
+
+/* Tienda packs */
+.tienda-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 18px 0;
+}
+.tienda-pack {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+}
+.tienda-pack:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.tienda-pack.activo {
+    background: rgba(29, 242, 221, 0.07);
+    border-color: rgba(29, 242, 221, 0.4);
+    box-shadow: 0 0 0 1px rgba(29, 242, 221, 0.15);
+}
+.pack-monto {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.pack-precio {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+}
+
+/* Botones de acción en modales */
+.btn-reclamar,
+.btn-comprar-pack {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    margin-bottom: 10px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s;
+}
+.btn-reclamar {
+    background: linear-gradient(135deg, #92400e 0%, #f59e0b 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.2);
+}
+.btn-reclamar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+}
+.btn-comprar-pack {
+    background: linear-gradient(135deg, #0e7490 0%, #1DF2DD 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(29, 242, 221, 0.2);
+}
+.btn-comprar-pack:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(29, 242, 221, 0.3);
+}
+.btn-reclamar:active,
+.btn-comprar-pack:active { transform: translateY(0); }
+.btn-reclamar:disabled,
+.btn-comprar-pack:disabled {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+#temporizadorRecompensa {
+    color: var(--error);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.88rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODO CLARO — Botones de tarjeta y modales
+   ═══════════════════════════════════════════════════════════ */
+
+[data-theme="light"] .btn-crear {
+    background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+    color: #fff;
+}
+[data-theme="light"] .btn-crear:hover {
+    box-shadow: 0 8px 22px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+[data-theme="light"] .btn-unirse {
+    background: #fff;
+    border-color: rgba(15, 23, 42, 0.15);
+    color: var(--text-secondary);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+[data-theme="light"] .btn-unirse:hover {
+    background: #f8fafc;
+    border-color: var(--cyan);
+    color: var(--cyan-dark);
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.15);
+}
+
+[data-theme="light"] .btn-grid-container {
+    border-top-color: rgba(15, 23, 42, 0.07);
+}
+
+[data-theme="light"] .btn-card-action {
+    background: #fff;
+    border-color: rgba(15, 23, 42, 0.1);
+    color: var(--text-secondary);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+[data-theme="light"] .btn-card-action:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+[data-theme="light"] .btn-purple:hover {
+    background: rgba(6, 182, 212, 0.06);
+    border-color: rgba(6, 182, 212, 0.3);
+    color: var(--cyan-dark);
+}
+[data-theme="light"] .btn-cyan:hover {
+    background: rgba(245, 158, 11, 0.06);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #92400e;
+}
+[data-theme="light"] .btn-yellow:hover {
+    background: rgba(139, 92, 246, 0.06);
+    border-color: rgba(139, 92, 246, 0.3);
+    color: #6d28d9;
+}
+[data-theme="light"] .btn-red:hover {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: var(--red-soft);
+}
+
+[data-theme="light"] .modal-recompensa-box,
+[data-theme="light"] .modal-tienda-box {
+    background: #fff;
+    border-color: rgba(15, 23, 42, 0.1);
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.12);
+}
+[data-theme="light"] .recompensa-stats {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.08);
+}
+[data-theme="light"] .tienda-pack {
+    background: var(--bg-elevated);
+    border-color: rgba(15, 23, 42, 0.1);
+}
+[data-theme="light"] .tienda-pack:hover {
+    background: #fff;
+    border-color: rgba(15, 23, 42, 0.2);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+[data-theme="light"] .tienda-pack.activo {
+    background: rgba(6, 182, 212, 0.06);
+    border-color: rgba(6, 182, 212, 0.35);
+    box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.15);
+}
+[data-theme="light"] .btn-reclamar:disabled,
+[data-theme="light"] .btn-comprar-pack:disabled {
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    color: var(--muted);
+}
